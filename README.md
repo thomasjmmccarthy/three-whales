@@ -2,7 +2,7 @@
 
 Current development repo for the Three Whales website.
 
-Three Whales is a site run by three individuals - each assigned their own 'whale' (represented int he real world by actual crochet whales).
+Three Whales is a site run by three individuals - each assigned their own 'whale' (represented in the real world by actual crochet whales).
 
 It is a blog site, with the ability to create posts and add images.
 
