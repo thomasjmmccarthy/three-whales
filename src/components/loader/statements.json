@@ -1,0 +1,99 @@
+{
+
+  "events": {
+    "10-31": [
+      "get spooky",
+      "scare the neighbours",
+      "carve pumpkins",
+      "tell ghost stories",
+      "dress as ghosts",
+      "follow strange noises"
+    ],
+    "12-25": [
+      "celebrate christmas",
+      "decorate the tree",
+      "wrap presents",
+      "huddle by the fire",
+      "drink hot chocolate",
+      "sing carols"
+    ],
+    "12-31": [
+      "prepare for the new year",
+      "count down",
+      "stay up till midnight",
+      "make resolutions"
+    ],
+    "01-01": [
+      "sleep in late",
+      "drink lots of water",
+      "start a new routine",
+      "open the curtains"
+    ],
+    "04-20": [
+      "blaze it"
+    ]
+  },
+
+  "generic": [
+    "go to the beach",
+    "plan a road trip",
+    "watch the sunset",
+    "cook dinner together",
+    "build a sandcastle",
+    "explore a new city",
+    "have a picnic",
+    "go stargazing",
+    "go for a walk",
+    "learn to swim",
+    "make a playlist",
+    "go to a café",
+    "collect seashells",
+    "catch a movie",
+    "get lost on purpose",
+    "play a board game",
+    "write a postcard",
+    "dance in the kitchen",
+    "build a fire",
+    "read a book",
+    "follow the moon",
+    "watch the rain",
+    "sit in comfortable silence",
+    "wander about",
+    "stay up too late",
+    "live in the moment",
+    "enjoy the afternoon",
+    "go with the flow",
+    "do absolutely nothing",
+    "let time pass",
+    "bask in the sun",
+    "climb a tree",
+    "cause chaos",
+    "laugh at nothing",
+    "yap",
+    "spill the tea",
+    "wait for a sign",
+    "pet a cat",
+    "pet a dog",
+    "roll down a hill",
+    "do the tango",
+    "travel through time",
+    "travel the long road",
+    "catch the last train",
+    "turn back",
+    "pack light",
+    "enter the jungle",
+    "go to the theatre",
+    
+    "destroy the one ring",
+    "fight over the air mattress",
+    "singe a guinea-pig",
+    "go to Greggs",
+    "against TGJones",
+    "fix a leaky roof",
+    "drink at the Solitary West",
+    "are trapped in a cycle",
+    "go to Pomona",
+    "hide the body",
+    "go into the light"
+  ]
+}

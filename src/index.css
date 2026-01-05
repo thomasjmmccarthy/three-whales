@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+:root {
+  font-family: 'Afacad', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: #101010;
+  background-color: white;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --whale-blue: #38b6ff;
+  --whale-purple: #b28cff;
+  --whale-green: #7ed957;
+}
+
+@font-face {
+  font-family: 'IntroRust';
+  src: url('./assets/fonts/IntroRust/IntroRust-Base.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Afacad';
+  src: url('./assets/fonts/Afacad/Afacad-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Afacad';
+  src: url('./assets/fonts/Afacad/Afacad-Bold.ttf') format('truetype');
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: 'Afacad';
+  src: url('./assets/fonts/Afacad/Afacad-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'IntroRust';
+}
+
+h1 {
+  font-size: 25px;
+}
+
+p {
+  font-family: 'Afacad';
+}
+
+input {
+  border-bottom: 2px solid #cccccc;
+  padding: 2px;
+  height: 40px;
+  transition: 0.1s;
+}
+
+input:focus {
+  outline: none;
+  border-color: black;
+}
+
+.markdown-input > div {
+  border: 2px solid #cccccc;
+  padding: 2px;
+  transition: 0.1s;
+  min-height: 100px;
+}
+
+.markdown-input > div:focus {
+  outline: none;
+  border-color: black;
+}
