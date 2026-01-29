@@ -1,6 +1,10 @@
 [
   {
-    "origin": ["http://localhost:5173"],
+    "origin": [
+      "http://localhost:5173",
+      "https://threewhales.co.uk",
+      "https://www.threewhales.co.uk"
+    ],
     "method": ["GET", "HEAD"],
     "responseHeader": ["Content-Type", "Authorization"],
     "maxAgeSeconds": 3600
