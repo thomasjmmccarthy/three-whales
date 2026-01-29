@@ -6,7 +6,7 @@ import { db } from "../../firebase";
 import { useTailwindScreen } from "../../components/screens/tailwind-screen/TailwindScreen";
 import { getFormattedDate, getShortFormattedData } from "../../components/date-formatter/DateFormatter";
 import { User, X } from "lucide-react";
-import { getScoutBadge } from "./GetScoutBadge";
+import { getScoutBadge } from "./getScoutBadge";
 
 import GoldBanner from '../../assets/scout-banners/gold.svg';
 import SilverBanner from '../../assets/scout-banners/silver.svg';
