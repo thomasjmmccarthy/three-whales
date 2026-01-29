@@ -1,0 +1,20 @@
+GOLD:
+  "And Ahab wept, for there were no more worlds to conquer."
+  Spotted all three whales.
+
+SILVER:
+  Spotted two of three whales.
+
+BRONZE:
+  Spotted one of the whales.
+
+RECENT SPOTTER:
+  Featured in a post in the last two weeks.
+
+WHALE STALKER:
+  Saw all three whales in one week.
+
+FAVOURITISM:
+  See one whale considerably more than the others.
+  Must have seen at least two whales, and one whale at
+  least 2x more than any others.

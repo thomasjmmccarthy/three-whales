@@ -7,6 +7,10 @@ import MyWhaleTab from './pages/_admin/my-whale-tab/MyWhaleTab'
 import PostsTab from './pages/_admin/posts-tab/PostsTab'
 import ScoutsTab from './pages/_admin/scouts-tab/ScoutsTab'
 import TimelinePage from './pages/timeline-2/TimelinePage'
+import ScoutsPage from './pages/scouts/ScoutsPage'
+import { Leaderboard } from './pages/leaderboard/Leaderboard'
+import { JoinPage } from './pages/join/JoinPage'
+import { AboutPage } from './pages/about/AboutPage'
 
 function App() {
 
@@ -15,8 +19,13 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route index element={<TimelinePage />} />
-          <Route path='/timeline/*' element={<TimelinePage />}  />
-          <Route path='/login'      element={<LoginPage />}     />
+          <Route path='/timeline/*'   element={<TimelinePage />}  />
+          <Route path='/scouts/*'     element={<ScoutsPage />}    />
+          <Route path='/leaderboard'  element={<Leaderboard />}   />
+          <Route path='/join'         element={<JoinPage />}      />
+          <Route path='/about'        element={<AboutPage />}     />
+
+          <Route path='/login'        element={<LoginPage />}     />
 
           {/* Admin Pages */}
           <Route

@@ -3,7 +3,15 @@ import { LANE_WIDTH, LANES, WHALES } from "./TimelineConstants";
 import { getInitialX, getLaneOffset, getLaneX, pointsToQuadraticPath } from "./Helpers";
 import { useNavigate } from "react-router-dom";
 
-export function DateBlock({i, dateKey, posts, xEntry, xExit, entryOffset, exitOffset, highlighted, handleHighlightEnter, handleHighlightExit, getNextPosts, is}) {
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+export function DateBlock({
+  i, dateKey, posts, 
+  xEntry, xExit, entryOffset, exitOffset, 
+  highlighted, handleHighlightEnter, handleHighlightExit, 
+  getNextPosts, is,
+  newYear, newMonth
+}) {
 
   const blockHeight = 80;
   const stationY = 15;
@@ -26,71 +34,82 @@ export function DateBlock({i, dateKey, posts, xEntry, xExit, entryOffset, exitOf
   }
 
   return (
-    <div
-      className='relative'
-      key={dateKey}
-    >
-      <svg 
-        className='w-full h-35 block -mb-0.5'
-        viewBox={`0 0 ${viewWidth} ${blockHeight}`}
-        preserveAspectRatio='xMidYMid meet'
-        onClick={() => {
-          if(!is('md')) handleHighlightExit();
-        }}
-      >
-        {/* Guide line for date level */}
-        <line 
-          x1='0'
-          y1={stationY}
-          x2={viewWidth}
-          y2={stationY}
-          stroke='rgba(0,0,0,0.05)'
-          strokeWidth='1'
-        />
-
-        {/* Whale Lines */}
-        {WHALES.map((w) => (
-          <path 
-            key={w}
-            d={pointsToQuadraticPath(lineCoords[w], cornerRounding, w, getCurrentPost(w, stations), getNextPosts(i)[w])}
-            fill='none'
-            stroke={window.getComputedStyle(document.documentElement).getPropertyValue(`--whale-${w}`)}
-            strokeWidth={LANE_WIDTH}
-            strokeOpacity={
-              useDashedLine(w)
-              ? 0.5
-              : 1
-            }
-            strokeDasharray={useDashedLine(w) ? '1 8 0' : 'none'}
-            strokeLinecap='round'
+    <div className='relative w-full flex justify-center' key={dateKey}>
+      <div className='relative flex h-full'>
+        <div className='relative w-2 shrink-0 h-full'>
+          {(newYear || newMonth) && (
+            <div>
+              <h2 className={`select-none text-[#e5e5e5] -rotate-90 ${newYear ? 'mt-9' : 'mt-6'}`} style={{fontSize: newYear ? '40px' : '20px'}}>
+                {newYear
+                  ? dateKey.slice(0, 4)
+                  : MONTHS[parseInt(dateKey.slice(5, 7), 10) - 1]}
+              </h2>
+            </div>
+          )}
+        </div>
+        <svg 
+          className='w-auto h-35 block -mb-0.5'
+          viewBox={`-12 0 ${viewWidth + 24} ${blockHeight}`}
+          preserveAspectRatio='xMidYMid meet'
+          onClick={() => {
+            if(!is('md')) handleHighlightExit();
+          }}
+        >
+          {/* Guide line for date level */}
+          <line 
+            x1='0'
+            y1={stationY}
+            x2={viewWidth}
+            y2={stationY}
+            stroke='rgba(0,0,0,0.05)'
+            strokeWidth='1'
           />
-        ))}
 
-        {/* Stations */}
-        {stations.map((s) => {
-          const isHighlighted = highlighted && s.post.uid === highlighted.post.uid;
-          return(
-            <circle
-              key={s.post.uid}
-              cx={s.x}
-              cy={s.y}
-              r={isHighlighted ? '11' : '9'}
-              fill={isHighlighted ? '#fdcb6e' : 'white'}
-              stroke='rgba(0,0,0.35)'
-              strokeWidth='2'
-              className='cursor-pointer transition-all drop-shadow-black/20 drop-shadow-[0px_0px_2px] duration-150 hover:drop-shadow-white/90'
-              onMouseEnter={() => {if(is('md')) handleHighlightEnter(s)}}
-              onMouseLeave={() => {if(is('md')) handleHighlightExit()}}
-              onClick={(e) => {
-                e.stopPropagation();
-                if(is('md')) navigate(`/timeline/${s.post.uid}`, {replace: true});
-                else handleHighlightEnter(s);
-              }}
+          {/* Whale Lines */}
+          {WHALES.map((w) => (
+            <path 
+              key={w}
+              d={pointsToQuadraticPath(lineCoords[w], cornerRounding, w, getCurrentPost(w, stations), getNextPosts(i)[w])}
+              fill='none'
+              stroke={window.getComputedStyle(document.documentElement).getPropertyValue(`--whale-${w}`)}
+              strokeWidth={LANE_WIDTH}
+              strokeOpacity={
+                useDashedLine(w)
+                ? 0.5
+                : 1
+              }
+              strokeDasharray={useDashedLine(w) ? '1 8 0' : 'none'}
+              strokeLinecap='round'
             />
-          )
-        }
-      )}
-      </svg>
+          ))}
+
+          {/* Stations */}
+          {stations.map((s) => {
+            const isHighlighted = highlighted && s.post.uid === highlighted.post.uid;
+            return(
+              <circle
+                key={s.post.uid}
+                cx={s.x}
+                cy={s.y}
+                r={isHighlighted ? '11' : '9'}
+                fill={isHighlighted ? '#fdcb6e' : 'white'}
+                stroke='rgba(0,0,0.35)'
+                strokeWidth='2'
+                className='cursor-pointer transition-all drop-shadow-black/20 drop-shadow-[0px_0px_2px] duration-150 hover:drop-shadow-white/90'
+                onMouseEnter={() => {if(is('md')) handleHighlightEnter(s)}}
+                onMouseLeave={() => {if(is('md')) handleHighlightExit()}}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if(is('md')) navigate(`/timeline/${s.post.uid}`);
+                  else handleHighlightEnter(s);
+                }}
+              />
+            )
+          }
+        )}
+        </svg>
+        <div className='relative w-2' />
+      </div>
     </div>
   )
 }

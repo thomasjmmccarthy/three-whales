@@ -17,6 +17,10 @@
   --whale-blue: #38b6ff;
   --whale-purple: #b28cff;
   --whale-green: #7ed957;
+
+  --trophy-gold: #ffb853;
+  --trophy-silver: #b0dbeb;
+  --trophy-bronze: #df722e;
 }
 
 @font-face {

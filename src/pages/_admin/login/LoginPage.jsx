@@ -12,7 +12,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) navigate('/admin', {replace: true});
+      if (user) navigate('/admin', {replace:true});
     });
     return unsubscribe;
   }, [navigate])

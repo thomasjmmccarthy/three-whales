@@ -155,23 +155,38 @@ export default function Timeline({ selected, pageSize=20, whaleData }) {
               <p className='text-[#aaa] select-none'>{is('md') ? 'Click on' : 'Tap'} a stop to see more</p>
             </motion.div>
             <div className='relative w-full mb-12 md:scale-115 md:mb-10' onMouseMove={handleMouseMove}> 
-              {dateGroups.map((d, i) => (
-                <DateBlock
-                  i={i}
-                  key={d.date}
-                  dateKey={d.date}
-                  posts={d.posts}
-                  xEntry={xEntries[i]}
-                  xExit={xExits[i]}
-                  entryOffset={entryOffsets[i]}
-                  exitOffset={exitOffsets[i]}
-                  highlighted={highlighted}
-                  handleHighlightEnter={handleHighlightEnter}
-                  handleHighlightExit={handleHighlightExit}
-                  getNextPosts={getNextPosts}
-                  is={is}
-                />
-              ))}
+              {dateGroups.map((d, i) => {
+                let newYear;
+                let newMonth;
+                if(i !== dateGroups.length - 1) {
+                  const year = d.date.split('-')[0];
+                  const month = d.date.split('-')[1];
+                  newYear = year !== dateGroups[i+1].date.split('-')[0];
+                  newMonth = newYear || month !== dateGroups[i+1].date.split('-')[1];
+                };
+                return (
+                  <DateBlock
+                    i={i}
+                    key={d.date}
+                    dateKey={d.date}
+                    posts={d.posts}
+
+                    xEntry={xEntries[i]}
+                    xExit={xExits[i]}
+                    entryOffset={entryOffsets[i]}
+                    exitOffset={exitOffsets[i]}
+
+                    highlighted={highlighted}
+                    handleHighlightEnter={handleHighlightEnter}
+                    handleHighlightExit={handleHighlightExit}
+
+                    getNextPosts={getNextPosts}
+                    is={is}
+
+                    newYear={newYear}
+                    newMonth={newMonth}
+                  />
+              )})}
             </div>
 
             <AnimatePresence>{(highlighted && is('md')) &&

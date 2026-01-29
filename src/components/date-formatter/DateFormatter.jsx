@@ -19,12 +19,19 @@ const daySuffixes = [
   [['3', '23'], 'rd']
 ]
 
-export function getFormattedDate(datetime) {
+function getSplitDate(datetime) {
   const splitDatetime = datetime.slice(0,10).split('-');
 
   let day = splitDatetime[2];
   const month = splitDatetime[1];
   const year = splitDatetime[0];
+
+  return { day, month, year }
+}
+
+export function getFormattedDate(datetime) {
+  
+  let { day, month, year } = getSplitDate(datetime);
 
   if(Array.from(day)[0] === '0') day = day.slice(1, 2);
 
@@ -34,4 +41,9 @@ export function getFormattedDate(datetime) {
   }
 
   return `${day}${suffix} ${months[parseInt(month)-1]} ${year}`
+}
+
+export function getShortFormattedData(datetime) {
+  let { day, month, year } = getSplitDate(datetime);
+  return `${day}/${month}/${year}`;
 }

@@ -1,9 +1,9 @@
 import { collection, doc, getDoc, getDocs, limit, orderBy, query, startAfter, setDoc, deleteDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL, deleteObject, getBytes } from "firebase/storage";
 import { AnimatePresence, motion } from "motion/react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { db, getAllWhales, storage } from "../../../firebase";
-import { X, PlusSquare, SquareCheck, Ellipsis, Square, Trash, User } from "lucide-react";
+import { X, PlusSquare, SquareCheck, Ellipsis, Square, Trash, User, ArrowLeft, ArrowRight } from "lucide-react";
 import WhaleLoader from "../../../components/loader/WhaleLoader";
 
 import BlueWhale from '../../../assets/whales/normal/blue.svg';
@@ -21,6 +21,7 @@ export default function ScoutsTab() {
   const [editMode, setEditMode] = useState(false);
   const [editSelected, setEditSelected] = useState([]);
   const [deleting, setDeleting] = useState(false);
+  const [viewUnapproved, setViewUnapproved] = useState(false);
   const PAGE_SIZE = 20;
 
   const handleCreateScout = () => {
@@ -51,7 +52,7 @@ export default function ScoutsTab() {
     try {
       await Promise.all(
         editSelected.map(async(uid) => {
-          const scoutRef = doc(db, 'scouts', uid);
+          const scoutRef = doc(db, viewUnapproved ? 'unapproved-scouts' : 'scouts', uid);
           const snap = await getDoc(scoutRef);
           if(!snap.exists()) return;
 
@@ -106,11 +107,32 @@ export default function ScoutsTab() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.1 }}
         >
-          <ScoutEditor scout={selected} whales={whales} setSelected={setSelected} refreshScouts={refreshScouts} />
+          <ScoutEditor scout={selected} whales={whales} setSelected={setSelected} refreshScouts={refreshScouts} isUnapproved={viewUnapproved} />
         </motion.div>
       }</AnimatePresence>
 
-      <h1 className='w-full text-center md:text-start'>Scouts</h1>
+      <h1 className='w-full text-center md:text-start'>{viewUnapproved ? 'Approve' : ''} Scouts</h1>
+
+      <div className='w-full flex justify-center mt-6 mb-6'>
+        <button
+          className='w-[95%] max-w-100 border-2 rounded-md font-bold flex gap-2 justify-center items-center cursor-pointer transition-all hover:bg-[#eee] hover:gap-4 disabled:opacity-20'
+          disabled={editMode}
+          onClick={() => {
+            setViewUnapproved(!viewUnapproved);
+            refreshScouts();
+          }}
+        >
+          { viewUnapproved &&
+            <ArrowLeft size={18} />
+          }
+          {
+            !viewUnapproved ? 'Approve submissions' : 'Back to scouts'
+          }
+          { !viewUnapproved &&
+            <ArrowRight size={18} />
+          }
+        </button>
+      </div>
 
       {
         editMode
@@ -119,7 +141,7 @@ export default function ScoutsTab() {
             {
               editSelected.length > 0 &&
               <Trash
-                className='text-[#d63031] absolute top-2 right-2 cursor-pointer transition-all hover:opacity-75 md:top-12 md:right-auto md:left-3'
+                className='text-[#d63031] absolute top-2 right-2 cursor-pointer transition-all hover:opacity-75 md:top-18 md:right-auto md:left-3'
                 disabled={deleting}
                 size={25}
                 onClick={handleDelete}
@@ -157,6 +179,7 @@ export default function ScoutsTab() {
         editSelected={editSelected} 
         setEditSelected={setEditSelected} 
         deleting={deleting}
+        viewUnapproved={viewUnapproved}
       />
 
     </motion.div>
@@ -164,7 +187,10 @@ export default function ScoutsTab() {
 }
 
 
-function ScoutList({pageSize, setSelected, refreshKey, editMode, editSelected, setEditSelected, deleting}) {
+function ScoutList({pageSize, setSelected, refreshKey, editMode, editSelected, setEditSelected, deleting, viewUnapproved}) {
+  
+  const scoutCollection = viewUnapproved ? 'unapproved-scouts' : 'scouts';
+
   const [scouts, setScouts] = useState([]);
   const [lastDoc, setLastDoc] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -183,8 +209,8 @@ function ScoutList({pageSize, setSelected, refreshKey, editMode, editSelected, s
     setLoading(true);
     try {
       const q = lastDoc
-      ? query(collection(db, 'scouts'), ...qBase, startAfter(lastDoc))
-      : query(collection(db, 'scouts'), ...qBase);
+      ? query(collection(db, scoutCollection), ...qBase, startAfter(lastDoc))
+      : query(collection(db, scoutCollection), ...qBase);
 
       const snap = await getDocs(q);
       const newScouts = snap.docs.map((s) => s.data());
@@ -198,15 +224,15 @@ function ScoutList({pageSize, setSelected, refreshKey, editMode, editSelected, s
     } finally {
       setLoading(false);
     }
-  }, [loading, hasMore, lastDoc, qBase, pageSize]);
+  }, [loading, hasMore, lastDoc, qBase, pageSize, scoutCollection]);
 
   const loadFirstPage = useCallback(async () => {
     setLoading(true);
     try {
       const q = query(
-        collection(db, 'scouts'),
+        collection(db, scoutCollection),
         ...qBase,
-      );
+      )
 
       const snap = await getDocs(q);
       const newScouts = snap.docs.map((d) => d.data());
@@ -217,7 +243,7 @@ function ScoutList({pageSize, setSelected, refreshKey, editMode, editSelected, s
     } finally {
       setLoading(false);
     }
-  }, [qBase, pageSize]);
+  }, [qBase, pageSize, scoutCollection]);
 
   // initial load + refresh
   useEffect(() => {
@@ -226,7 +252,7 @@ function ScoutList({pageSize, setSelected, refreshKey, editMode, editSelected, s
     setHasMore(true);
     loadFirstPage();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadFirstPage, refreshKey]);
+  }, [loadFirstPage, refreshKey, viewUnapproved]);
 
   // Infinite scroll trigger
   useEffect(() => {
@@ -249,7 +275,7 @@ function ScoutList({pageSize, setSelected, refreshKey, editMode, editSelected, s
   );
 
   return (
-    <div className='mt-12'>
+    <div>
       {scouts.map((s) => {
         let fullTitle = `${s.name} the ${s.title}`
 
@@ -312,7 +338,10 @@ function ScoutList({pageSize, setSelected, refreshKey, editMode, editSelected, s
                 <p className='text-sm leading-5'>Joined: {day}/{month}/{year}</p>
               </div>
               {
-                s.pfp && <img src={s.pfp.url} className='w-12 rounded-md' />
+                s.pfp && 
+                <div className='w-12 shrink-0 rounded-md aspect-square overflow-hidden flex items-center justify-center'>
+                  <img src={s.pfp.url} className='object-cover object-center' />
+                </div>
               }
             </div>
           </div>
@@ -331,7 +360,7 @@ function WhaleIndicator({icon}) {
 }
 
 
-function ScoutEditor({scout, whales, setSelected, refreshScouts}) {
+function ScoutEditor({scout, whales, setSelected, refreshScouts, isUnapproved}) {
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -481,6 +510,57 @@ function ScoutEditor({scout, whales, setSelected, refreshScouts}) {
     setSaving(false);
   }
 
+  async function handleApprove() {
+    setSaving(true);
+
+    try {
+      let newPfp = null;
+      let fromRef;
+
+      // Copy pfp to main scouts bucket
+      if(scout.pfp) {
+        fromRef = ref(storage, scout.pfp.storagePath);
+        const newStoragePath = `scouts/${scout.pfp.storagePath.split('/').pop()}`;
+        const toRef = ref(storage, newStoragePath);
+        const bytes = await getBytes(fromRef);
+        await uploadBytes(toRef, bytes);
+        const url = await getDownloadURL(toRef);
+        newPfp = {storagePath: newStoragePath, url: url};
+      }
+
+      const newScout = {
+        uid: scout.uid,
+        name: scoutName,
+        title: title,
+        whales: {
+          blue: { spotted: blueWhaleSpotted, date: (blueWhaleSpotted ? `${blueWhaleYear}-${blueWhaleMonth}-${blueWhaleDay}` : '') },
+          green: { spotted: greenWhaleSpotted, date: (greenWhaleSpotted ? `${greenWhaleYear}-${greenWhaleMonth}-${greenWhaleDay}` : '') },
+          purple: { spotted: purpleWhaleSpotted, date: (purpleWhaleSpotted ? `${purpleWhaleYear}-${purpleWhaleMonth}-${purpleWhaleDay}` : '') }
+        },
+        created: `${year}-${month}-${day}`,
+        pfp: newPfp
+      };
+
+      const scoutDoc = doc(db, 'scouts', scout.uid);
+      await setDoc(scoutDoc, newScout);
+
+      // Delete unapproved pfp
+      if(scout.pfp) await deleteObject(fromRef);
+      
+      // Delet unapproved scout object
+      const oldScoutDoc = doc(db, 'unapproved-scouts', scout.uid);
+      await deleteDoc(oldScoutDoc);
+
+      refreshScouts();
+      setSelected(null);
+    }
+    catch(err) {
+      alert('Could not approve scout');
+      console.error(err);
+      setSaving(false);
+    }
+  }
+
   return (
     <div className='fixed inset-0 flex justify-center items-center z-20'>
       <div className="absolute inset-0 bg-black/20" onClick={() => setSelected(null)} />
@@ -488,7 +568,7 @@ function ScoutEditor({scout, whales, setSelected, refreshScouts}) {
 
         <X disabled={saving} className='absolute left-8 top-8 text-[#aaaaaa] cursor-pointer hover:text-black md:hidden' onClick={() => setSelected(null)} />
 
-        <AnimatePresence>{ (edited || scout.new) &&
+        <AnimatePresence>{ ((edited || scout.new) && !isUnapproved) &&
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -507,15 +587,36 @@ function ScoutEditor({scout, whales, setSelected, refreshScouts}) {
           
         }</AnimatePresence>
 
+        <AnimatePresence>{ isUnapproved &&
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.1 }}
+            className='absolute right-8 top-8 flex gap-4'
+          >
+            <motion.button
+              className='bg-white hover:bg-[#fdcb6e] rounded-md text-black font-bold border-2 px-3 py-1 shadow-md cursor-pointer transition-all'
+              onClick={handleApprove}
+              disabled={saving}
+            >
+              {saving ? 'Approving...' : 'APPROVE'}
+            </motion.button>
+          </motion.div>
+          
+        }</AnimatePresence>
+
         <h2 className='w-full text-center mt-20 mb-8 md:mt-0 md:text-start md:overflow-hidden md:text-nowrap md:text-ellipsis md:w-[90%]'>{scout.new ? 'New Scout' : fullTitle}</h2>
 
         <input ref={inputRef} type='file' accept='image/*' className='hidden' onChange={handlePfpChange} />
         <div className='w-full flex justify-center mb-4'>
-          {
-            pfp
-            ? <img onClick={() => inputRef.current?.click()} src={pfp.url} className='border-2 rounded-full w-32.5 cursor-pointer transition-all hover:opacity-70' />
-            : <User onClick={() => inputRef.current?.click()} size={130} className='border-2 rounded-full cursor-pointer transition-all hover:opacity-70' />
-          }
+          <div onClick={() => inputRef.current?.click()}  className='w-32.5 aspect-square overflow-hidden rounded-md flex justify-center items-center border-2 cursor-pointer transition-all hover:opacity-70'>
+            {
+              pfp
+              ? <img src={pfp.url} className='object-cover' />
+              : <User size={60} />
+            }
+          </div>
         </div>
 
         <form className='flex flex-col items-center mb-10' onChange={() => setEdited(true)}>

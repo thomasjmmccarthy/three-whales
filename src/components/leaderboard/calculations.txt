@@ -1,0 +1,9 @@
+
+Points are calculated as so:
+
+> Points are assigned per-post:
+  > 1 point for a 1-whale post
+  > 3 points for a 2-whale post
+  > 5 points for a 3-whale post
+
+> At the end, points are multiplied by the number of whales seen
