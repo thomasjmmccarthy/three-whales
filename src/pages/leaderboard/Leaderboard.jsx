@@ -6,6 +6,7 @@ import { getAnnualPoints } from "../../components/leaderboard/GetPoints";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowBigLeftDash, Crown, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTailwindScreen } from "../../components/screens/tailwind-screen/TailwindScreen";
 
 export function Leaderboard() {
 
@@ -16,6 +17,7 @@ export function Leaderboard() {
 
   const year = new Date().getFullYear();
   const navigate = useNavigate();
+  const { is } = useTailwindScreen();
 
   // Get posts from this year
   useEffect(() => {
@@ -103,16 +105,16 @@ export function Leaderboard() {
             initial={{opacity: 0}}
             animate={{opacity: 1}}
             transition={{duration: 0.5}}
-            className='w-full mt-40 md:mt-4 flex flex-col items-center pb-12'
+            className='w-full not-md:mt-32 flex flex-col items-center pb-12'
           >
             <div className='w-[90%] max-w-240'>
-              <button onClick={() => navigate('/scouts')} className='mb-8 px-3 py-1 flex items-center gap-2 transition-all cursor-pointer hover:text-[#0984e3] hover:gap-3'>
-                <ArrowBigLeftDash /><h2>Scouts</h2>
+              <button onClick={() => navigate('/scouts')} className='not-md:text-[#777] md:mb-2 md:px-3 py-1 flex items-center gap-2 transition-all cursor-pointer hover:text-[#0984e3] hover:gap-3'>
+                <ArrowBigLeftDash /><h2 className='not-md:hidden'>Scouts</h2>
               </button>
             </div>
-            <div className='flex gap-4 items-center mb-10'>
-              <Crown size={35} />
-              <h1>{year} Leaderboard</h1>
+            <div className='flex gap-4 items-center mb-6 md:mb-10'>
+              <Crown size={is('md') ? 35 : 30} />
+              <h2 className='text-[18px] md:text-2xl'>{year} Leaderboard</h2>
             </div>
             <div className='w-[90%] max-w-240'>
               {
@@ -144,24 +146,24 @@ function LeaderboardItem({s, i, setSelected}) {
       animate={{opacity: 1, scale: 1}}
       whileHover={{scale: 1.03, filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.25))', zIndex: 10, borderTopColor: 'rgba(0,0,0,1)'}}
       transition={{duration: 0.3, type: 'spring', delay: i * delayMultiplier}}
-      className='relative w-full px-4 py-2 border-b-2 flex justify-between border-t-2 border-t-transparent cursor-pointer'
+      className='relative w-full px-2 md:px-4 py-2 border-b-2 flex justify-between border-t-2 border-t-transparent cursor-pointer'
       style={{backgroundColor: i===0 ? 'var(--trophy-gold)' : i===1 ? 'var(--trophy-silver)' : i===2 ? 'var(--trophy-bronze)' : 'white'}}
       onClick={() => setSelected({scout: s, place: i+1})}
     >
-      <div className='flex gap-3 md:gap-5 items-center'>
-        <h2 className='text-lg md:text-2xl'>#{i+1}</h2>
-        <div className='w-14 aspect-square overflow-hidden border-2 flex jusitfy-center items-center rounded-md'>
+      <div className='flex gap-2 md:gap-5 items-center'>
+        <h2 className='md:text-2xl'>#{i+1}</h2>
+        <div className='w-10 md:w-14 shrink-0 aspect-square overflow-hidden border-2 flex jusitfy-center items-center rounded-md'>
           {
             s.pfp
             ? <img src={s.pfp.url} className='object-cover' />
             : <User size={40} className='w-full' />
           }
         </div>
-        <h2 className='text-sm md:text-lg line-clamp-1'>{s.name} <span className='text-xs underline'>the</span> {s.title}</h2>
+        <h2 className='text-xs md:text-lg line-clamp-1'>{s.name} <span className='text-xs underline'>the</span> {s.title}</h2>
       </div>
       <div className='flex items-center gap-2'>
-        <h2 className='text-lg md:text-2xl'>{s.points}</h2>
-        <p>points</p>
+        <h2 className='md:text-2xl'>{s.points}</h2>
+        <p className='not-md:text-sm'>points</p>
       </div>
     </motion.div>
   )
@@ -201,25 +203,25 @@ function LeaderboardViewer({selected, setSelected}) {
     >
       <div onClick={(e) => e.stopPropagation()} className='w-[90%] max-w-180 max-h-[90dvh] overflow-y-auto bg-white rounded-lg'>
 
-        <div className='w-full p-6 flex justify-between' style={{backgroundColor: place===1 ? 'var(--trophy-gold)' : place===2 ? 'var(--trophy-silver)' : place===3 ? 'var(--trophy-bronze)' : 'white'}}>
+        <div className='w-full px-3 py-4 md:p-6 flex justify-between' style={{backgroundColor: place===1 ? 'var(--trophy-gold)' : place===2 ? 'var(--trophy-silver)' : place===3 ? 'var(--trophy-bronze)' : 'white'}}>
           <div className='flex gap-3 md:gap-5 items-center'>
-            <h2 className='text-lg md:text-2xl'>#{place}</h2>
-            <div className='w-14 aspect-square overflow-hidden border-2 flex jusitfy-center items-center rounded-md'>
+            <h2 className='md:text-2xl'>#{place}</h2>
+            <div className='w-10 md:w-14 shrink-0 aspect-square overflow-hidden border-2 flex jusitfy-center items-center rounded-md'>
               {
                 s.pfp
                 ? <img src={s.pfp.url} className='object-cover' />
                 : <User size={40} className='w-full' />
               }
             </div>
-            <h2 className='text-sm md:text-lg line-clamp-1'>{s.name} <span className='text-xs underline'>the</span> {s.title}</h2>
+            <h2 className='text-xs md:text-lg line-clamp-1'>{s.name} <span className='text-xs underline'>the</span> {s.title}</h2>
           </div>
           <div className='flex items-center gap-2'>
-            <h2 className='text-lg md:text-2xl'>{s.points}</h2>
-            <p>points</p>
+            <h2 className='md:text-2xl'>{s.points}</h2>
+            <p className='not-md:text-sm'>points</p>
           </div>
         </div>
 
-        <div className='w-full px-8 py-4 flex flex-col items-center'>
+        <div className='w-full px-4 md:px-8 py-3 md:py-4 flex flex-col items-center'>
           <div className='w-full max-w-120 grid grid-cols-4'>
             {/* LABELS */}
             <Label bold left>Post Type</Label>
@@ -250,8 +252,8 @@ function LeaderboardViewer({selected, setSelected}) {
             <div />
             <Label bold right>{postPoints}</Label>
           </div>
-          <hr className='w-full max-w-140 my-4 opacity-25 border'/>
-          <p className='text-sm mt-4 text-center'><b>{s.name} the {s.title}</b> has seen <b>{whalesSeen}</b> whale{whalesSeen === 1 ? '' : 's'} this year!</p>
+          <hr className='w-full max-w-140 my-3 md:my-4 opacity-25 border'/>
+          <p className='text-sm md:mt-4 text-center'><b>{s.name} the {s.title}</b> has seen <b>{whalesSeen}</b> whale{whalesSeen === 1 ? '' : 's'} this year!</p>
           <div className='w-full flex justify-center items-center gap-2 mt-3 pb-3'>
             <h2 className='text-2xl'>{whalesSeen}</h2>
             <p className='font-bold text-2xl'>x</p>
@@ -270,7 +272,7 @@ function LeaderboardViewer({selected, setSelected}) {
 
 function Label({bold, left, right, children}) {
   return (
-    <p className={`text-sm ${bold ? 'font-bold' : left ? 'ml-1' : ''} ${left ? 'text-start' : right ? 'text-end' : 'text-center'}`}>
+    <p className={`text-[12.5px] md:text-sm ${bold ? 'font-bold' : left ? 'md:ml-1' : ''} ${left ? 'text-start' : right ? 'text-end' : 'text-center'}`}>
       {children}
     </p>
   )

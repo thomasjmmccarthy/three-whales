@@ -25,7 +25,7 @@ import { doc, getDoc } from "firebase/firestore";
 export default function AdminLayout() {
   
   return (
-    <div className='w-full flex justify-center pt-12'>
+    <div className='w-full flex justify-center pt-8 md:pt-12'>
       <main className='w-[90%] max-w-3xl mb-22'>
         <Outlet />
       </main>
@@ -107,8 +107,12 @@ function TabIcon({ isActive, grey, hover, active }) {
 
   return (
     <div 
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onPointerEnter={(e) => {
+        if(e.pointerType === 'mouse') setHovered(true)
+      }}
+      onPointerLeave={(e) => {
+        if(e.pointerType === 'mouse') setHovered(false);
+      }}
       className='w-10 h-full relative flex justify-center items-center'
     >
       <IconLayer icon={grey} visible={!isActive && !hovered} />

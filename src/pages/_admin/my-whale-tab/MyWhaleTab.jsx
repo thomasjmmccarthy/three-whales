@@ -90,11 +90,11 @@ export default function MyWhaleTab() {
       className='relative'
     >
 
-      <div title='Log Out' className='absolute right-2'>
+      <div title='Log Out' className='absolute top-1 right-2'>
         <LogOutIcon className='cursor-pointer transition-all duration-100 hover:text-(--whale-blue)' onClick={logout} />
       </div>
 
-      <h1 className='w-full text-center md:text-start'>My Whale</h1>
+      <h1 className='text-center md:text-start'>My Whale</h1>
 
       <div className='flex flex-col md:flex-row'>
         <div className='w-full flex justify-center items-start order-1 mb-4 md:mb-0 md:w-1/3 md:justify-end md:order-2'>
@@ -106,14 +106,14 @@ export default function MyWhaleTab() {
           <input className='w-[90%]' placeholder='name' value={name} onChange={(e) => {setName(e.target.value); setHasChanged(true);}} />
           <p className='w-[90%] text-start -mt-3 ml-1 text-xs italic opacity-60'>the {whale.uid.replace(/^./, whale.uid[0].toUpperCase())} Whale</p>
           <p className='w-[90%] text-start -mb-4 mt-4 font-bold'>Bio</p>
-          <MarkDownEditor className='w-[90%] mb-6' value={bio} onChange={(e) => {setBio(e); setHasChanged(true);}} placeholder='bio' />
+          <MarkDownEditor className='w-[90%] mb-4 not-md:text-sm' value={bio} onChange={(e) => {setBio(e); setHasChanged(true);}} placeholder='bio' />
           <AnimatePresence>{hasChanged && 
             <motion.button
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }} 
-              className='cursor-pointer rounded-md bg-black text-white p-2.5 w-30 transition-all hover:text-(--whale-blue) hover:shadow-lg'
+              className='not-md:mb-6 cursor-pointer rounded-md bg-black text-white p-2.5 w-30 transition-all hover:text-(--whale-blue) hover:shadow-lg'
               onClick={handleSave}
               disabled={isSaving}
             >{isSaving? 'SAVING...' : 'SAVE'}</motion.button>

@@ -35,10 +35,10 @@ export function AboutPage() {
           initial={{opacity: 0, scale: 0.9}}
           animate={{opacity: 1, scale: 1}}
           transition={{duration: 0.7, type: 'spring'}}
-          className='w-[90%] max-w-4xl mt-44 md:mt-4 flex flex-col items-center pb-12'
+          className='w-[90%] max-w-4xl mt-32 md:mt-4 flex flex-col items-center pb-12'
         >
-          <img src={WhaleImage} className='w-[90%] max-w-70 lg:max-w-80 2xl:max-w-90  drop-shadow-[0_12px_8px_#00000022]' />
-          <h1 className='mt-10'>Three Whales</h1>
+          <img src={WhaleImage} className='w-[90%] max-w-55 md:max-w-70 lg:max-w-80 2xl:max-w-90  drop-shadow-[0_12px_8px_#00000022]' />
+          <h1 className='mt-6 md:mt-10'>Three Whales</h1>
           <div className='w-[95%] max-w-160 flex flex-col gap-4 mt-8 leading-6'>
             <p>
               This is a very serious website about <b>three extremely important crochet whales.</b>
@@ -64,9 +64,9 @@ export function AboutPage() {
               transition={{duration: 0.5}}
               className='w-full flex flex-col items-center'
             >
-              <hr className='w-[90%] my-12 border' />
+              <hr className='w-[90%] my-12 border opacity-20' />
               <h1>Your Hosts</h1>
-              <div className='w-full grid grid-cols-1 md:grid-cols-3 gap-2 mt-6'>
+              <div className='w-full grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4 mt-6'>
                 {
                   whales.map((w) => <Host w={w} />)
                 }
@@ -92,10 +92,10 @@ function Host({w}) {
 
   return (
     <div className='relative w-full flex flex-col items-center'>
-      <img src={whaleIcon[w.uid]} className='w-[80%] max-w-50' style={{ transform: `rotate(${rotation}deg)` }} />
-      <h2>{w.name}</h2>
-      <p>the {w.uid} whale</p>
-      <div className='w-[90%] md:w-full max-w-120 leading-5 mt-5 mb-8 md:mb-0 text-center md:text-start text-[#333]'>
+      <img src={whaleIcon[w.uid]} className='w-[80%] max-w-40 md:max-w-50 drop-shadow-[0_8px_4px_#00000033]' style={{ transform: `rotate(${rotation}deg)` }} />
+      <h2 className='mt-2'>{w.name}</h2>
+      <p className='text-sm text-[#999] uppercase'>{w.uid} whale</p>
+      <div className='w-[90%] md:w-full max-w-120 leading-5 mt-2 md:mt-4 md:mb-0 text-center md:text-start text-[#333]'>
         <ReactMarkdown>
           {w.bio}
         </ReactMarkdown>

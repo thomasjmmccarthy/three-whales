@@ -142,7 +142,7 @@ function Scout({scout, posts, whales, navigate, baseDelay=0}) {
   });
 
   return (
-    <div className='w-full p-8 flex flex-col items-center gap-6'>
+    <div className='w-full px-8 pt-3 pb-8 md:p-8 flex flex-col items-center gap-6'>
       <div className='md:w-[75%] flex flex-col items-center'>
         <div className='w-full flex flex-col md:flex-row justify-center items-center md:gap-6'>
           <div className='relative w-30 mb-5'>
@@ -155,7 +155,7 @@ function Scout({scout, posts, whales, navigate, baseDelay=0}) {
           </div>
           <div>
             <h1 className='w-full leading-7 line-clamp-2 flex items-center gap-2.5'>{scout.name} <span className='text-sm underline mt-0.5'>the</span> {scout.title}</h1>
-            <p className='mt-1 ml-0.5 text-center md:text-start'>scouting since <b>{getFormattedDate(scout.created)}</b></p>
+            <p className='mt-1 ml-0.5 text-center md:text-start text-sm md:text-[16px]'>scouting since <b>{getFormattedDate(scout.created)}</b></p>
             <div className='mt-2 flex flex-col items-center md:items-start'>
               { annualPoints !== null && <p className='text-xs font-bold w-2/5 flex justify-between'><span>current points:</span> {annualPoints}</p> }
               { points !== null &&       <p className='text-xs font-bold w-2/5 flex justify-between -mt-0.5'><span>all-time points:</span> {points}</p> }

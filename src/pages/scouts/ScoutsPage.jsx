@@ -8,6 +8,7 @@ import WhaleLoader from "../../components/loader/WhaleLoader";
 import { getScoutBadge } from "./getScoutBadge";
 import { ScoutViewer } from "./ScoutViewer";
 import { Binoculars, Crown, User } from "lucide-react";
+import { useTailwindScreen } from "../../components/screens/tailwind-screen/TailwindScreen";
 
 function ScoutsPage() {
 
@@ -74,14 +75,14 @@ function ScoutsPage() {
               initial={{opacity: 0}}
               animate={{opacity: 1}}
               transition={{duration: 0.5}}
-              className='w-[90%] max-w-7xl mt-44 md:mt-4 flex flex-col gap-14 pb-12'
+              className='w-[90%] max-w-7xl mt-35 md:mt-4 flex flex-col gap-8 md:gap-14 pb-12'
             >
               <div className='w-full flex justify-center'>
                 <div className='w-[95%] md:w-[90%] flex flex-col md:flex-row justify-center items-center gap-2 md:p-4'>
-                  <button onClick={() => navigate('/leaderboard')} className='border-2 px-4 py-3 flex items-center justify-center gap-4 transition-all cursor-pointer hover:bg-[#fdcb6e]'>
+                  <button onClick={() => navigate('/leaderboard')} className='border-2 p-3 md:px-4 md:py-3 flex items-center justify-center gap-4 transition-all cursor-pointer hover:bg-[#fdcb6e]'>
                     <Crown /><h2>2026 Leaderboard</h2>
                   </button>
-                  <button onClick={() => navigate('/join')} className='border-2 px-4 py-3 flex items-center justify-center gap-4 transition-all cursor-pointer hover:bg-[#fd79a8]'>
+                  <button onClick={() => navigate('/join')} className='border-2 p-3 md:px-4 md:py-3 flex items-center justify-center gap-4 transition-all cursor-pointer hover:bg-[#fd79a8]'>
                     <Binoculars /><h2>Become a Scout</h2>
                   </button>
                 </div>
@@ -106,9 +107,9 @@ export default ScoutsPage;
 function ScoutSection({scouts, heading, tagline}) {
   return (
     <div key={heading}>
-      <h1>{heading}</h1>
-      <p className='border-b-2 border-[#aaa] text-sm italic text-[#555] pb-2'>{tagline}</p>
-      <div className='w-full mt-4 grid gap-4 grid-cols-3 sm:grid-cols-5 md:grid-cols-8 lg:grid-cols-9'>
+      <h2 className='text-xl md:text-2xl'>{heading}</h2>
+      <p className='border-b-2 border-[#aaa] text-xs md:text-sm italic text-[#555] pb-2'>{tagline}</p>
+      <div className='w-full mt-4 grid gap-2 md:gap-4 grid-cols-3 sm:grid-cols-5 md:grid-cols-8 lg:grid-cols-9'>
         {
           scouts.map((s, i) => <ScoutTile key={s.uid} s={s} i={i} />)
         }
@@ -122,6 +123,8 @@ function ScoutTile({s, i}) {
   const delayMultiplier = 0.1;
   const scoutBadge = getScoutBadge(s);
   const navigate = useNavigate();
+
+  const { is } = useTailwindScreen();
 
   return (
     <motion.div
@@ -141,15 +144,15 @@ function ScoutTile({s, i}) {
           {
             s.pfp 
             ? <img className='object-cover' src={s.pfp?.url} />
-            : <User size={60} />
+            : <User size={is('md') ? 60 : 50} />
           }
         </div>
         <div className='min-h-8 py-0.5 flex justify-center items-center'>
-          <p className='font-bold text-center text-xs line-clamp-2 px-2 leading-3.5'>{s.name} the {s.title}</p>
+          <p className='font-bold text-center text-[12px] md:text-xs line-clamp-2 px-2 leading-3 md:leading-3.5'>{s.name} the {s.title}</p>
         </div>
         {
           scoutBadge && 
-          <div className='absolute right-0 top-0 translate-x-1/4 -translate-y-1/4 w-10 bg-white rounded-full p-1'>
+          <div className='absolute right-0 top-0 w-8 translate-x-1/4 -translate-y-1/4 md:w-10 bg-white rounded-full p-0.5 md:p-1'>
             <img src={scoutBadge} />
           </div>
         }

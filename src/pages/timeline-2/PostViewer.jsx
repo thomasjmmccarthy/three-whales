@@ -110,15 +110,15 @@ function Post({post, whales, scouts, currentPhoto, direction, handlePhotoChange,
   const swipePower = (offset, velocity) => Math.abs(offset) * velocity;
 
   return (
-    <div className='w-full p-8 flex flex-col items-center gap-6'>
-      <div className='md:w-[75%]'>
+    <div className='w-full pt-3 pb-8 md:p-8 flex flex-col items-center gap-6'>
+      <div className='w-[75%]'>
         {postTitle}
       </div>
       <div className='w-full flex flex-col items-center'>
       {
         currentPhoto !== null && post.gallery.length > 0 && (
         <div className='w-full flex flex-col items-center'>
-          <div className='relative w-[95%] aspect-square overflow-hidden md:w-[60%]'>
+          <div className='relative w-[95%] aspect-square overflow-hidden sm:w-[80%] md:w-[60%]'>
             <AnimatePresence initial={false} custom={direction}>{
               <motion.img
                 key={currentPhoto}
@@ -133,7 +133,7 @@ function Post({post, whales, scouts, currentPhoto, direction, handlePhotoChange,
 
                 drag='x'
                 dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.2}
+                dragElastic={0.5}
                 onDragEnd={(e, {offset, velocity}) => {
                   const swipe = swipePower(offset.x, velocity.x);
                   // Swipe left = next image
@@ -169,18 +169,18 @@ function Post({post, whales, scouts, currentPhoto, direction, handlePhotoChange,
             </div>
           }
         </div>)}
-        <div className='w-[95%] md:w-[60%] leading-5 mt-4'>
+        <div className='w-[90%] md:w-[60%] leading-4.5 mt-4 text-sm md:text-md'>
           <ReactMarkdown>
             {post.content}
           </ReactMarkdown>
-          <p className='mt-2 text-sm text-[#999]'>{getFormattedDateDifference(post.datetime)}</p>
+          <p className='mt-3 md:mt-2 text-xs md:text-sm text-[#999]'>{getFormattedDateDifference(post.datetime)}</p>
         </div>
         {
           scouts?.length &&
-          <div className='w-[95%] md:w-[60%] mt-6'>
+          <div className='w-[90%] md:w-[60%] mt-6'>
             <hr className='border-[#aaa] border'/>
-            <h2 className='mb-2 mt-1 text-[#555] text-sm'>Scouts</h2>
-            <div className='w-full grid grid-cols-8 gap-1'>
+            <h2 className='mb-3 mt-2 md:mb-2 md:mt-1 text-[#555] text-xs md:text-sm'>Scouts</h2>
+            <div className='w-full grid grid-cols-6 md:grid-cols-8 gap-1'>
               {
                 scouts.map((s) => <ScoutTile scout={s} navigate={navigate} />)
               }
@@ -246,7 +246,7 @@ function getWhaleName(whales, w) {
 
 function getPostTitle(post, whales) {
   return (
-    <h1 className='w-full text-center leading-7 line-clamp-3 overflow-hidden text-ellipsis'>
+    <h2 className='w-full text-center line-clamp-3 text-lg md:py-3 leading-6 md:leading-7 md:text-2xl'>
       {
         post.whales.length === 3
         ? <b className='underline'>Three Whales</b>
@@ -256,6 +256,6 @@ function getPostTitle(post, whales) {
           </>
         : <b className='text-shadow-[px_0px_2px_#00000022]' style={{color: getWhaleColour(post.whales[0])}}>{getWhaleName(whales, post.whales[0])}</b>
       } {post.title}
-    </h1>
+    </h2>
   )
 }

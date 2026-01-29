@@ -19,6 +19,9 @@ export function DateBlock({
   const viewWidth = 180;
   const cornerRounding = 15.5;
 
+  const stationRadius = is('md') ? '9' : '11';
+  const stationStrokeWidth = is('md') ? '2' : '3';
+
   const navigate = useNavigate();
 
   // Turn the provided parameters into graphic data
@@ -91,10 +94,10 @@ export function DateBlock({
                 key={s.post.uid}
                 cx={s.x}
                 cy={s.y}
-                r={isHighlighted ? '11' : '9'}
+                r={isHighlighted ? (parseInt(stationRadius) + 2).toString() : stationRadius}
                 fill={isHighlighted ? '#fdcb6e' : 'white'}
                 stroke='rgba(0,0,0.35)'
-                strokeWidth='2'
+                strokeWidth={stationStrokeWidth}
                 className='cursor-pointer transition-all drop-shadow-black/20 drop-shadow-[0px_0px_2px] duration-150 hover:drop-shadow-white/90'
                 onMouseEnter={() => {if(is('md')) handleHighlightEnter(s)}}
                 onMouseLeave={() => {if(is('md')) handleHighlightExit()}}

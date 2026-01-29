@@ -231,9 +231,9 @@ export function PostEditor({post, whales, setSelected, refreshPosts}) {
   return (
     <div className='fixed inset-0 flex justify-center items-center z-20'>
       <div className="absolute inset-0 bg-black/20" onClick={() => setSelected(null)} />
-      <div className='w-full h-full overflow-y-auto relative bg-white p-8 pb-18 md:pb-8 md:max-h-[90%] z-30 md:rounded-lg md:w-[90%] md:max-w-200 md:h-auto'>
+      <div className='w-full h-full overflow-y-auto relative bg-white px-5 md:p-8 pb-18 md:pb-8 md:max-h-[90%] z-30 md:rounded-lg md:w-[90%] md:max-w-200 md:h-auto'>
 
-        <X disabled={saving} className='absolute left-8 top-8 text-[#aaaaaa] cursor-pointer hover:text-black md:hidden' onClick={() => setSelected(null)} />
+        <X disabled={saving} className='absolute left-4 top-6 text-[#aaaaaa] cursor-pointer hover:text-black md:hidden' onClick={() => setSelected(null)} />
 
         <AnimatePresence>{ (edited || post.draft) &&
           <motion.div 
@@ -241,7 +241,7 @@ export function PostEditor({post, whales, setSelected, refreshPosts}) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.1 }}
-            className='absolute right-8 top-8 flex gap-4'
+            className='fixed z-100 not-md:bg-white/90 not-md:p-3 not-md:pt-4 not-md:rounded-lg md:absolute right-4 top-0 md:right-8 md:top-8 flex gap-2 md:gap-4'
           >
             {
               post.draft && 
@@ -250,7 +250,7 @@ export function PostEditor({post, whales, setSelected, refreshPosts}) {
                 onClick={() => handleSave('draft')}
                 disabled={saving}
               >
-                {saving === 'draft' ? 'Saving...' : 'SAVE AS DRAFT'}
+                {saving === 'draft' ? 'Saving...' : 'SAVE DRAFT'}
               </motion.button>
             }
             <motion.button
@@ -264,7 +264,7 @@ export function PostEditor({post, whales, setSelected, refreshPosts}) {
           
         }</AnimatePresence>
 
-        <h2 className='w-full text-center mt-20 mb-8 md:mt-0 md:text-start md:overflow-hidden md:text-nowrap md:text-ellipsis md:w-[90%]'>{post.draft ? 'New Post' : fullTitle}</h2>
+        <h2 className='w-full md:w-[90%] not-md:h-12 flex not-md:justify-center text-center items-center not-md:text-sm line-clamp-2 md:line-clamp-1 mt-16 mb-8 md:mt-0 md:text-start'>{post.draft ? 'New Post' : fullTitle}</h2>
 
         <div className='w-full flex justify-center gap-2 md:mt-10 md:gap-12'>
           <WhaleCheckBox icon={BlueWhale} name={whales['blue'].name} value={blueWhale} setValue={setBlueWhale} setEdited={setEdited} colour='#38b6ff' />
@@ -272,20 +272,20 @@ export function PostEditor({post, whales, setSelected, refreshPosts}) {
           <WhaleCheckBox icon={PurpleWhale} name={whales['purple'].name} value={purpleWhale} setValue={setPurpleWhale} setEdited={setEdited} colour='#b28cff' />
         </div>
 
-        <p className='text-center mt-6 font-bold text-xs'>{getTitlePrefix()}...</p>
+        <h2 className='text-center text-[#222] mt-8 font-bold text-[10px] md:text-sm tracking-wider'>{getTitlePrefix()}...</h2>
 
         <form className='flex flex-col items-center mb-4' onChange={() => setEdited(true)}>
-          <div className='w-full flex justify-center mb-2'>
-            <input className='w-[50%] min-w-60 font-bold text-center' placeholder='... title' value={title} onChange={(e) => setTitle(e.target.value)} />
+          <div className='w-full flex justify-center'>
+            <input className='w-[50%] min-w-60 font-bold text-center text-lg' placeholder='... title' value={title} onChange={(e) => setTitle(e.target.value)} />
           </div>
-          <div className='w-[25%] min-w-40 flex mb-6'>
-            <input className='text-center w-1/3 text-sm font-bold' placeholder='DD' value={day} onChange={(e) => setDay(e.target.value)} />
+          <div className='w-[25%] min-w-40 flex mb-8'>
+            <input className='text-center w-1/3 text-xs md:text-sm font-bold' placeholder='DD' value={day} onChange={(e) => setDay(e.target.value)} />
             <p className='mt-2'>/</p>
-            <input className='text-center w-1/3 text-sm font-bold' placeholder='MM' value={month} onChange={(e) => setMonth(e.target.value)} />
+            <input className='text-center w-1/3 text-xs md:text-sm font-bold' placeholder='MM' value={month} onChange={(e) => setMonth(e.target.value)} />
             <p className='mt-2'>/</p>
-            <input className='text-center w-1/3 text-sm font-bold' placeholder='YYYY' value={year} onChange={(e) => setYear(e.target.value)} />
+            <input className='text-center w-1/3 text-xs md:text-sm font-bold' placeholder='YYYY' value={year} onChange={(e) => setYear(e.target.value)} />
           </div>
-          <MarkdownEditor className='w-full' value={content} onChange={(e) => {setContent(e); setEdited(true);}} />
+          <MarkdownEditor className='w-full not-md:text-sm not-md:leading-4.5' value={content} onChange={(e) => {setContent(e); setEdited(true);}} />
           <p style={{ color: content.length > CHARACTER_LIMIT ? '#f00' : '#999' }} className='w-full text-end text-sm'>{content.length}/{CHARACTER_LIMIT}</p>
         </form>
 
@@ -333,7 +333,7 @@ function WhaleCheckBox({icon, name, value, setValue, setEdited, colour}) {
       onClick={() => {setValue(!value); setEdited(true);}}
     >
       <img className='w-10' src={icon} />
-      <p>{name}</p>
+      <p className='not-md:text-sm'>{name}</p>
     </div>
   )
 }
@@ -369,7 +369,7 @@ function Gallery({ gallery, onAdd, onRemove, onReorder, maxImages }) {
   return (
     <div className="space-y-3">
       <div className='w-full flex gap-6 items-center border-b-2 pb-1 text-[#555] border-[#555]'>
-        <h2>Images ({gallery.length}/{maxImages})</h2>
+        <h2 className='not-md:text-sm'>Images ({gallery.length}/{maxImages})</h2>
         <div>
           <input
             ref={fileInputRef}
@@ -379,7 +379,7 @@ function Gallery({ gallery, onAdd, onRemove, onReorder, maxImages }) {
             multiple
             onChange={(e) => e.target.files && handlePickFiles(e)}
           />
-          <CirclePlus className='transition-all hover:opacity-80 cursor-pointer' size={24} onClick={() => fileInputRef.current.click()} />
+          <CirclePlus className='transition-all hover:opacity-80 cursor-pointer' size={20} onClick={() => fileInputRef.current.click()} />
         </div>
       </div>
 
@@ -389,7 +389,7 @@ function Gallery({ gallery, onAdd, onRemove, onReorder, maxImages }) {
         onDragEnd={onDragEnd}
       >
         <SortableContext items={ids} strategy={rectSortingStrategy}>
-          <div className='grid grid-cols-3 md:grid-cols-5 gap-2'>
+          <div className='grid grid-cols-2 md:grid-cols-5 gap-2'>
             {
               gallery.map((img) => (
                 <SortableTile key={img.id} img={img} onRemove={onRemove} />
@@ -451,16 +451,16 @@ function ScoutGallery({ scouts, setScouts, allScouts, setEdited }) {
 
   return (
     <div className="space-y-3 mt-8">
-      <div className='w-full flex gap-6 items-center border-b-2 pb-1 text-[#555] border-[#555]'>
+      <div className='w-full flex gap-6 items-center border-b-2 pb-1 not-md:text-sm text-[#555] border-[#555]'>
         <h2>Scouts</h2>
-        <CirclePlus className='transition-all hover:opacity-80 cursor-pointer' size={24} onClick={() => setOpen(true)} />
+        <CirclePlus className='transition-all hover:opacity-80 cursor-pointer' size={20} onClick={() => setOpen(true)} />
       </div>
 
 
       <AnimatePresence>
         {(open && allScouts) && (
           <motion.div
-            className="fixed left-0 top-0 w-full h-[100dvh] z-50 bg-black/40 flex justify-center items-center"
+            className="fixed left-0 top-0 w-full h-dvh z-50 bg-black/40 flex justify-center items-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -486,7 +486,7 @@ function ScoutGallery({ scouts, setScouts, allScouts, setEdited }) {
         )}
       </AnimatePresence>
 
-      <div className='grid grid-cols-3 md:grid-cols-5 gap-2'>
+      <div className='grid grid-cols-3 md:grid-cols-6 gap-2'>
       {
         sortedScouts.map((s) =>
           <ScoutTile key={s.uid} scout={s} scouts={scouts} setScouts={setScouts} setEdited={setEdited} />

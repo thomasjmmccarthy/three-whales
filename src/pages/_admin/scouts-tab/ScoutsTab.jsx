@@ -111,7 +111,7 @@ export default function ScoutsTab() {
         </motion.div>
       }</AnimatePresence>
 
-      <h1 className='w-full text-center md:text-start'>{viewUnapproved ? 'Approve' : ''} Scouts</h1>
+      <h1 className='w-full text-center md:text-start'>{viewUnapproved ? 'Approve' : 'Scouts'}</h1>
 
       <div className='w-full flex justify-center mt-6 mb-6'>
         <button
@@ -291,7 +291,7 @@ function ScoutList({pageSize, setSelected, refreshKey, editMode, editSelected, s
 
         return (
           <div
-            className='border-t-2 border-[#aaaaaa] p-3 flex gap-6 transition-all duration-100 cursor-pointer hover:bg-[#f5f5f5]'
+            className='border-t-2 border-[#aaaaaa] p-3 flex gap-3 md:gap-6 transition-all duration-100 cursor-pointer hover:bg-[#f5f5f5]'
             key={s.uid}
             onClick={() => {
               if(editMode && !deleting) {
@@ -318,7 +318,7 @@ function ScoutList({pageSize, setSelected, refreshKey, editMode, editSelected, s
                 </div>
               )
               : (
-                <div className='w-10 min-w-4 -mt-1 flex items-center'>
+                <div className='w-8 md:w-10 min-w-4 md:-mt-1 flex items-center'>
                   {
                     whalesSpotted === 3
                     ? <WhaleIndicator icon={GoldWhale} />
@@ -332,10 +332,10 @@ function ScoutList({pageSize, setSelected, refreshKey, editMode, editSelected, s
               )
             }
           
-            <div className='w-full flex justify-between'>
+            <div className='w-full flex justify-between items-center'>
               <div className='w-full'>
-                <p className='text-lg md:text-xl font-bold truncate'>{fullTitle}</p>
-                <p className='text-sm leading-5'>Joined: {day}/{month}/{year}</p>
+                <p className='md:text-xl font-bold truncate'>{fullTitle}</p>
+                <p className='text-xs md:text-sm leading-4 md:leading-5'>Joined: {day}/{month}/{year}</p>
               </div>
               {
                 s.pfp && 
@@ -566,15 +566,15 @@ function ScoutEditor({scout, whales, setSelected, refreshScouts, isUnapproved}) 
       <div className="absolute inset-0 bg-black/20" onClick={() => setSelected(null)} />
       <div className='w-full h-full overflow-y-auto relative bg-white p-8 pb-18 md:pb-8 md:max-h-[90%] z-30 md:rounded-lg md:w-[90%] md:max-w-200 md:h-auto'>
 
-        <X disabled={saving} className='absolute left-8 top-8 text-[#aaaaaa] cursor-pointer hover:text-black md:hidden' onClick={() => setSelected(null)} />
+        <X disabled={saving} className='absolute left-4 top-6 text-[#aaaaaa] cursor-pointer hover:text-black md:hidden' onClick={() => setSelected(null)} />
 
-        <AnimatePresence>{ ((edited || scout.new) && !isUnapproved) &&
+        <AnimatePresence>{ ((edited && !isUnapproved) || scout.new) &&
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.1 }}
-            className='absolute right-8 top-8 flex gap-4'
+            className='fixed z-100 not-md:bg-white/90 not-md:p-3 not-md:pt-4 not-md:rounded-lg md:absolute right-4 top-0 md:right-8 md:top-8 flex gap-2 md:gap-4'
           >
             <motion.button
               className='bg-white hover:bg-[#fdcb6e] rounded-md text-black font-bold border-2 px-3 py-1 shadow-md cursor-pointer transition-all'
@@ -587,13 +587,13 @@ function ScoutEditor({scout, whales, setSelected, refreshScouts, isUnapproved}) 
           
         }</AnimatePresence>
 
-        <AnimatePresence>{ isUnapproved &&
+        <AnimatePresence>{ (!scout.new && isUnapproved) &&
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.1 }}
-            className='absolute right-8 top-8 flex gap-4'
+            className='fixed z-100 not-md:bg-white/90 not-md:p-3 not-md:pt-4 not-md:rounded-lg md:absolute right-4 top-0 md:right-8 md:top-8 flex'
           >
             <motion.button
               className='bg-white hover:bg-[#fdcb6e] rounded-md text-black font-bold border-2 px-3 py-1 shadow-md cursor-pointer transition-all'
@@ -606,10 +606,10 @@ function ScoutEditor({scout, whales, setSelected, refreshScouts, isUnapproved}) 
           
         }</AnimatePresence>
 
-        <h2 className='w-full text-center mt-20 mb-8 md:mt-0 md:text-start md:overflow-hidden md:text-nowrap md:text-ellipsis md:w-[90%]'>{scout.new ? 'New Scout' : fullTitle}</h2>
+        <h2 className='w-full md:w-[90%] flex not-md:justify-center text-center items-center not-md:text-sm line-clamp-2 md:line-clamp-1 mt-8 mb-4 md:mb-8 md:mt-0 md:text-start'>{scout.new ? 'New Scout' : fullTitle}</h2>
 
         <input ref={inputRef} type='file' accept='image/*' className='hidden' onChange={handlePfpChange} />
-        <div className='w-full flex justify-center mb-4'>
+        <div className='w-full flex justify-center mb-3 md:mb-4'>
           <div onClick={() => inputRef.current?.click()}  className='w-32.5 aspect-square overflow-hidden rounded-md flex justify-center items-center border-2 cursor-pointer transition-all hover:opacity-70'>
             {
               pfp
@@ -619,7 +619,7 @@ function ScoutEditor({scout, whales, setSelected, refreshScouts, isUnapproved}) 
           </div>
         </div>
 
-        <form className='flex flex-col items-center mb-10' onChange={() => setEdited(true)}>
+        <form className='flex flex-col items-center mb-8 md:mb-10' onChange={() => setEdited(true)}>
           <div className='w-full max-w-60 flex flex-col justify-center items-center mb-2'>
             <input className='w-full min-w-40 font-bold text-center' placeholder='first name' value={scoutName} onChange={(e) => setScoutName(e.target.value)} />
             <div className='w-full flex items-center gap-6'>
@@ -629,7 +629,7 @@ function ScoutEditor({scout, whales, setSelected, refreshScouts, isUnapproved}) 
           </div>
         </form>
 
-        <p className='text-center mb-2'>Has Spotted:</p>
+        <p className='text-center mb-2 not-md:text-sm'>Has Spotted:</p>
         <div className='w-full flex flex-col items-center gap-1'>
           <WhaleCheckBox
             icon={BlueWhale}
@@ -656,7 +656,7 @@ function ScoutEditor({scout, whales, setSelected, refreshScouts, isUnapproved}) 
         </div>
 
         <form className='flex flex-col items-center mt-10' onChange={() => setEdited(true)}>
-          <p>Joined:</p>
+          <p className='not-md:text-sm'>Joined:</p>
           <div className='w-[25%] min-w-40 flex mb-6'>
             <input className='text-center w-1/3 text-sm font-bold' placeholder='DD' value={day} onChange={(e) => setDay(e.target.value)} />
             <p className='mt-2'>/</p>
@@ -687,7 +687,7 @@ function WhaleCheckBox({icon, name, spotted, setSpotted, day, month, year, setDa
 
   return (
     <div
-      className='select-none cursor-pointer w-[90%] p-1 flex gap-2 items-center justify-center rounded-md border-2 transition-all duration-100'
+      className='select-none cursor-pointer w-full md:w-[90%] py-2 md:p-1 flex gap-2 items-center justify-center rounded-md border-2 transition-all duration-100'
       style={{
         ...{backgroundColor: spotted===true ? hexToRgba(colour, 0.2) : '#ffffff'},
         ...{borderColor: spotted===true ? colour : '#eeeeee'}
@@ -697,9 +697,9 @@ function WhaleCheckBox({icon, name, spotted, setSpotted, day, month, year, setDa
         setEdited(true);
       }}
     >
-      <div className='w-1/4 flex flex-col justify-center items-center gap-2'>
+      <div className='w-1/4 flex flex-col justify-center items-center md:gap-2'>
         <img className='w-10' src={icon} />
-        <p className='font-bold'>{name}</p>
+        <p className='font-bold not-md:text-sm'>{name}</p>
       </div>
       <AnimatePresence>{
         spotted &&

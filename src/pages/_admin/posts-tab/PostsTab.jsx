@@ -304,7 +304,7 @@ function PostList({pageSize, whales, setSelected, refreshKey, draft, editMode, e
 
         return (
           <div
-            className='border-t-2 border-[#aaaaaa] p-3 flex gap-6 transition-all duration-100 cursor-pointer hover:bg-[#f5f5f5]'
+            className='border-t-2 border-[#aaaaaa] p-3 flex gap-3 md:gap-6 transition-all duration-100 cursor-pointer hover:bg-[#f5f5f5]'
             key={i}
             onClick={() => {
               if(editMode && !deleting) {
@@ -340,11 +340,11 @@ function PostList({pageSize, whales, setSelected, refreshKey, draft, editMode, e
             }
           
             <div className='w-full'>
-              <div className='w-full grid grid-cols-[1fr_auto] items-baseline gap-6'>
-                <p className='text-lg md:text-xl font-bold truncate'>{fullTitle}</p>
-                <p className='text-lg md:text-xl font-bold text-right whitespace-nowrap'>{`${day}/${month}/${year}`}</p>
+              <div className='w-full flex flex-col md:grid md:grid-cols-[1fr_auto] items-baseline md:gap-6'>
+                <p className='md:text-xl font-bold line-clamp-1'>{fullTitle}</p>
+                <p className='text-[12px] not-md:-mt-0.5 md:text-xl text-[#999] md:text-black font-bold text-right whitespace-nowrap'>{`${day}/${month}/${year}`}</p>
               </div>
-              <p className='italic text-sm leading-5'>{preview}</p>
+              <p className='italic text-xs line-clamp-1 md:text-sm leading-5'>{preview}</p>
             </div>
           </div>
         )

@@ -63,19 +63,19 @@ export function JoinPage() {
           initial={{opacity: 0}}
           animate={{opacity: 1}}
           transition={{duration: 0.5}}
-          className='w-full flex justify-center mt-40 md:mt-4 pb-12'
+          className='w-full flex justify-center not-md:mt-32 pb-12'
         >
           <div className='w-[90%] max-w-240 flex flex-col items-center'>
 
             <div className='w-full'>
-              <button onClick={() => navigate('/scouts')} className='mb-8 px-3 py-1 flex gap-2 transition-all cursor-pointer hover:text-[#0984e3] hover:gap-3'>
-                <ArrowBigLeftDash /><h2>Scouts</h2>
+              <button onClick={() => navigate('/scouts')} className='not-md:text-[#777] md:mb-2 md:px-3 py-1 flex items-center gap-2 transition-all cursor-pointer hover:text-[#0984e3] hover:gap-3'>
+                <ArrowBigLeftDash /><h2 className='not-md:hidden'>Scouts</h2>
               </button>
             </div>
 
-            <div className='flex gap-4 items-center justify-center mb-14'>
-              <Binoculars size={35} />
-              <h1>Become a Scout</h1>
+            <div className='flex gap-4 items-center mb-8 md:mb-10'>
+              <Binoculars size={is('md') ? 35 : 30} />
+              <h2 className='text-[18px] md:text-2xl'>Become a Scout</h2>
             </div>
 
             <input ref={inputRef} type='file' accept='image/*' className='hidden' onChange={handlePfpChange} />
@@ -88,20 +88,20 @@ export function JoinPage() {
             </div>
             <p className='text-xs mt-1'>{is('sm') ? 'Click' : 'Tap'} to {pfp ? 'change' : 'add'}</p>
 
-            <input className='mt-12 w-[95%] max-w-85 text-center' placeholder='first name' value={name} onChange={(e) => setName(e.target.value)} />
-            <div className='w-[95%] max-w-80 flex items-center mt-3 gap-6'>
+            <input className='mt-8 md:mt-12 w-[95%] max-w-85 text-center' placeholder='first name' value={name} onChange={(e) => setName(e.target.value)} />
+            <div className='w-[95%] max-w-80 flex items-center mt-2 md:mt-3 gap-6'>
               <h2>the</h2>
               <input className='w-full max-w-100 text-center' placeholder='title' value={title} onChange={(e) => setTitle(e.target.value)} />
             </div>
 
-            <div className='w-full max-w-140 flex gap-4 items-center mt-24'>
+            <div className='w-full max-w-140 flex gap-4 items-center mt-14 md:mt-20'>
               <div className='w-10 shrink-0 p-2 aspect-square rounded-full transition-all cursor-pointer hover:opacity-80 flex justify-center items-center' style={{backgroundColor: consent ? '#16a085' : 'white'}} >
                 { consent
                   ? <SquareCheck onClick={() => setConsent(false)} className='text-white' size={25}  />
                   : <Square onClick={() => setConsent(true)} size={25} />
                 }
               </div>
-              <p className='text-sm leading-4 text-[#555]'>I consent to the provided information being stored on the Three Whales server, and understand it will not be used for any purpose beyond Three Whales.</p>
+              <p className='text-xs md:text-sm leading-3 md:leading-4 text-[#555]'>I consent to the provided information being stored on the Three Whales server, and understand it will not be used for any purpose beyond Three Whales.</p>
             </div>
 
             <div className='w-full max-w-140 flex gap-4 items-center mt-3 mb-8'>
@@ -111,7 +111,7 @@ export function JoinPage() {
                   : <Square onClick={() => setTerms(true)} size={25} />
                 }
               </div>
-              <p className='text-sm leading-4 text-[#555]'>I confirm I am submitting on behalf of myself, and understand that my submission may not be approved if any of the provided information is inappropriate.</p>
+              <p className='text-xs md:text-sm leading-3 md:leading-4 text-[#555]'>I confirm I am submitting on behalf of myself, and understand that my submission may not be approved if any of the provided information is inappropriate.</p>
             </div>
 
             <AnimatePresence>{ valid &&

@@ -147,14 +147,14 @@ export default function Timeline({ selected, pageSize=20, whaleData }) {
             transition={{duration: 0.25, ease: 'easeOut'}}
           >
             <motion.div
-              className='w-full h-[22dvh] min-h-55 md:h-[10dvh] md:min-h-0 mb-8 md:mb-40 flex justify-center items-end'
+              className='w-full -mb-15 min-h-50 md:h-25 md:min-h-0 md:mb-40 flex justify-center items-end'
               initial={{scale: 0.8, opacity: 0}}
               animate={{scale: 1, opacity: 1}}
               transition={{duration: 0.5, delay: 0.2, type:'spring'}}
             >
-              <p className='text-[#aaa] select-none'>{is('md') ? 'Click on' : 'Tap'} a stop to see more</p>
+              <p className='text-[#aaa] select-none text-sm md:text-[16px]'>{is('md') ? 'Click on' : 'Tap'} a stop to see more</p>
             </motion.div>
-            <div className='relative w-full mb-12 md:scale-115 md:mb-10' onMouseMove={handleMouseMove}> 
+            <div className={`relative w-full scale-85 md:scale-115 md:mb-10 ${(!is('md') && highlighted ? '-mb-10' : '-mb-30')}`} onMouseMove={handleMouseMove}> 
               {dateGroups.map((d, i) => {
                 let newYear;
                 let newMonth;
@@ -250,9 +250,18 @@ function HighlightCardMobile({highlighted, whaleData}) {
       transition={{duration:0.2, ease:'easeOut'}}
       onClick={() => navigate(`/timeline/${highlighted.post.uid}`)}
     >
-      <div className='w-[80%]'>
-        <HighlightContents highlighted={highlighted} whaleData={whaleData} mobile />
-      </div>
+      <AnimatePresence mode='wait'>
+        <motion.div 
+          key={highlighted.post.uid}
+          initial={{opacity: 0}}
+          animate={{opacity: 1}}
+          exit={{opacity: 0}}
+          transition={{duration: 0.1}}
+          className='w-[80%] text-sm'
+        >
+          <HighlightContents highlighted={highlighted} whaleData={whaleData} mobile />
+        </motion.div>
+      </AnimatePresence>
     </motion.div>
   )
 }
@@ -278,7 +287,7 @@ function HighlightContents({highlighted, whaleData, mobile=false}) {
           : <b className='text-shadow-[px_0px_2px_#00000022]' style={{color: getWhaleColour(highlighted.post.whales[0])}}>{getWhaleName(whaleData, highlighted.post.whales[0])}</b>
         } {p.title}
       </p>
-      <p className='text-xs mt-2 text-black/50'>{mobile? 'Tap' : 'Click'} for more...</p>
+      <p className='text-xs mt-2 text-black/50 font-bold tracking-wider'>{mobile? 'Tap' : 'Click'} for more...</p>
     </div>
   )
 }

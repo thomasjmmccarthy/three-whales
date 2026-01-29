@@ -28,7 +28,7 @@ export function TimelineLoader({timer}) {
       transition={{duration: timer/animScale, type:'spring'}}
     >
       <motion.p
-        
+        className='-mt-3 md:mt-0 text-sm md:text-[16px]'
       >three whales {statement}...</motion.p>
     </motion.div>
   )
