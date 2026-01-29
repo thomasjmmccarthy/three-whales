@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import Navigation from "../../components/navigation/navigation";
 import { db, getAllWhales } from "../../firebase";
-import { useLocation, useNavigate } from "react-router-dom";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+import { collection,  getDocs } from "firebase/firestore";
 import { AnimatePresence, motion } from "motion/react";
 import WhaleLoader from "../../components/loader/WhaleLoader";
-import { getScoutBadge } from "./GetScoutBadge";
+import { getScoutBadge } from "./getScoutBadge";
 import { ScoutViewer } from "./ScoutViewer";
 import { Binoculars, Crown, User } from "lucide-react";
 
