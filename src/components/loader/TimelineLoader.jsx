@@ -21,14 +21,14 @@ export function TimelineLoader({timer}) {
 
   return (
     <motion.div
-      className="w-full h-dvh md:h-[calc(100dvh-150px)] flex justify-center items-center"
+      className="w-full h-[calc(100dvh-114px)] not-md:mt-26 md:h-[calc(100dvh-150px)] flex justify-center items-center"
       initial={{scale: 0.95, opacity: 0}}
       animate={{scale: 1, opacity: 1}}
       exit={{scale: 1.2, opacity: 0}}
       transition={{duration: timer/animScale, type:'spring'}}
     >
       <motion.p
-        className='-mt-3 md:mt-0 text-sm md:text-[16px]'
+        className='text-sm md:text-[16px]'
       >three whales {statement}...</motion.p>
     </motion.div>
   )
