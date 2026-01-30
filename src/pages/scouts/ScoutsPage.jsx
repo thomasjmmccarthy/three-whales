@@ -144,7 +144,7 @@ function ScoutTile({s, i}) {
         transition={{duration: 0.5, type:'spring'}}
         className='relative rounded-lg bg-white border-2' 
       >
-        <div className='w-full aspect-square overflow-hidden flex justify-center items-center'>
+        <div className='w-full aspect-square rounded-t-md overflow-hidden flex justify-center items-center'>
           {
             s.pfp 
             ? <img className='object-cover' src={s.pfp?.url} />

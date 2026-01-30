@@ -154,7 +154,7 @@ function Scout({scout, posts, whales, navigate, baseDelay=0}) {
             </div>
           </div>
           <div className='w-full'>
-            <h1 className='leading-7 line-clamp-2 flex justify-center items-center text-center gap-2.5'>{scout.name} <span className='text-sm underline mt-0.5'>the</span> {scout.title}</h1>
+            <h2 className='text-lg md:text-2xl leading-7 line-clamp-1 flex justify-center items-center md:justify-start text-center gap-2 md:gap-2.5'>{scout.name} <span className='text-xs md:text-sm underline mt-0.5'>the</span> <span className='text-start line-clamp-1 md:text-2xl'>{scout.title}</span></h2>
             <p className='mt-1 ml-0.5 text-center md:text-start text-sm md:text-[16px]'>scouting since <b>{getFormattedDate(scout.created)}</b></p>
             <div className='mt-2 flex flex-col items-center md:items-start'>
               { annualPoints !== null && <p className='text-xs font-bold w-2/5 flex justify-between'><span>current points:</span> {annualPoints}</p> }
