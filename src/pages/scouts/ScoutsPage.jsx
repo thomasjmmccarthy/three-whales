@@ -20,8 +20,6 @@ function ScoutsPage() {
   
   const navigate = useNavigate();
 
-  const year = new Date().getFullYear();
-
   useEffect(() => {
     async function getAllScouts() {
       const docs = collection(db, 'scouts');
@@ -86,6 +84,12 @@ function ScoutsPage() {
                     <Binoculars /><h2>Become a Scout</h2>
                   </button>
                 </div>
+              </div>
+              <div className='w-full flex justify-center'>
+                <p className='text-center -mt-10 w-[60%] max-w-140'>
+                  Become a scout today, and <b>get photographed with the whales to earn points.</b><br/>
+                  Use those points to climb the leaderboard, then <b>brag to literally everyone</b> about how many crochet whales you've seen.
+                </p>
               </div>
               { !(goldScouts.length || silverScouts.length || bronzeScouts.length || awardlessScouts.length) ? <h1 className='text-center mt-30 text-[#999]'>And there are no scouts under the sun...</h1> : null }
               { goldScouts.length ? <ScoutSection scouts={goldScouts} heading='Gold Scouts' tagline='... and Ahab wept, for there were no more worlds to conquer' /> : null }

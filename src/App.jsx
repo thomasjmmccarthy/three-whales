@@ -11,6 +11,7 @@ import ScoutsPage from './pages/scouts/ScoutsPage'
 import { Leaderboard } from './pages/leaderboard/Leaderboard'
 import { JoinPage } from './pages/join/JoinPage'
 import { AboutPage } from './pages/about/AboutPage'
+import { QRPage } from './pages/qr/QRPage'
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
           <Route path='/scouts/*'     element={<ScoutsPage />}    />
           <Route path='/leaderboard'  element={<Leaderboard />}   />
           <Route path='/join'         element={<JoinPage />}      />
+          <Route path='/qr'           element={<QRPage />}        />
           <Route path='/about'        element={<AboutPage />}     />
 
           <Route path='/login'        element={<LoginPage />}     />
