@@ -147,7 +147,7 @@ export default function Timeline({ selected, pageSize=20, whaleData }) {
             transition={{duration: 0.25, ease: 'easeOut'}}
           >
             <motion.div
-              className='w-full -mb-15 min-h-50 md:h-25 md:min-h-0 md:mb-40 flex justify-center items-end'
+              className='w-full mb-10 min-h-50 md:h-25 md:min-h-0 md:mb-40 flex justify-center items-end'
               initial={{scale: 0.8, opacity: 0}}
               animate={{scale: 1, opacity: 1}}
               transition={{duration: 0.5, delay: 0.2, type:'spring'}}

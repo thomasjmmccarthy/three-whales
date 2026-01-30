@@ -187,7 +187,7 @@ function Post({post, whales, scouts, currentPhoto, direction, handlePhotoChange,
                 }
               </div>
             </div>
-          : null
+          : <div />
         }
       </div>
     </div>
