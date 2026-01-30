@@ -176,7 +176,7 @@ function Post({post, whales, scouts, currentPhoto, direction, handlePhotoChange,
           <p className='mt-3 md:mt-2 text-xs md:text-sm text-[#999]'>{getFormattedDateDifference(post.datetime)}</p>
         </div>
         {
-          scouts?.length 
+          (scouts && scouts.length > 0)
           ?
             <div className='w-[90%] md:w-[60%] mt-6'>
               <hr className='border-[#aaa] border'/>
