@@ -153,8 +153,8 @@ function Scout({scout, posts, whales, navigate, baseDelay=0}) {
               }
             </div>
           </div>
-          <div>
-            <h1 className='w-full leading-7 line-clamp-2 flex items-center gap-2.5'>{scout.name} <span className='text-sm underline mt-0.5'>the</span> {scout.title}</h1>
+          <div className='w-full'>
+            <h1 className='leading-7 line-clamp-2 flex justify-center items-center text-center gap-2.5'>{scout.name} <span className='text-sm underline mt-0.5'>the</span> {scout.title}</h1>
             <p className='mt-1 ml-0.5 text-center md:text-start text-sm md:text-[16px]'>scouting since <b>{getFormattedDate(scout.created)}</b></p>
             <div className='mt-2 flex flex-col items-center md:items-start'>
               { annualPoints !== null && <p className='text-xs font-bold w-2/5 flex justify-between'><span>current points:</span> {annualPoints}</p> }
@@ -184,6 +184,11 @@ function Scout({scout, posts, whales, navigate, baseDelay=0}) {
           <Podium trophy={BronzeWhale} whaleColour={sortedWhales[2]} height='22%' activeColour='var(--trophy-bronze)' active={whaleCount >= 1}  podium={podium} setPodium={setPodium} baseDelay={baseDelay} />
           <div className='absolute w-full h-2 bg-[#444] z-30' />
         </div>
+        {
+          scoutBadge === null 
+          ? <p className='text-xs mt-2'><b>{scout.name}</b> is seeking their first whale</p>
+          : <div/>
+        }
         <AnimatePresence>{
           podium &&
           <motion.div
