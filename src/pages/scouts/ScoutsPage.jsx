@@ -86,7 +86,7 @@ function ScoutsPage() {
                 </div>
               </div>
               <div className='w-full flex justify-center'>
-                <p className='text-center -mt-10 w-[60%] max-w-140'>
+                <p className='text-center md:-mt-10 w-[90%] md:w-[60%] max-w-140 not-md:mb-4'>
                   Become a scout today, and <b>get photographed with the whales to earn points.</b><br/>
                   Use those points to climb the leaderboard, then <b>brag to literally everyone</b> about how many crochet whales you've seen.
                 </p>
