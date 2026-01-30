@@ -53,10 +53,9 @@ export default function MyWhaleTab() {
         where("public_id", "==", newPublicID),
         limit(1)
       );
-      const snap = await getDocs(q);
+      const snaps = await getDocs(q);
       
-      if (snap.docs.length > 0) alert('This whale name is already in use!');
-      return;
+      if (snaps.docs.length > 0) alert('This whale name is already in use!');
     }
 
     // Update the whale
