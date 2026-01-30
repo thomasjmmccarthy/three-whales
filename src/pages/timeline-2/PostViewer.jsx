@@ -176,16 +176,18 @@ function Post({post, whales, scouts, currentPhoto, direction, handlePhotoChange,
           <p className='mt-3 md:mt-2 text-xs md:text-sm text-[#999]'>{getFormattedDateDifference(post.datetime)}</p>
         </div>
         {
-          scouts?.length &&
-          <div className='w-[90%] md:w-[60%] mt-6'>
-            <hr className='border-[#aaa] border'/>
-            <h2 className='mb-3 mt-2 md:mb-2 md:mt-1 text-[#555] text-xs md:text-sm'>Scouts</h2>
-            <div className='w-full grid grid-cols-6 md:grid-cols-8 gap-1'>
-              {
-                scouts.map((s) => <ScoutTile scout={s} navigate={navigate} />)
-              }
+          scouts?.length 
+          ?
+            <div className='w-[90%] md:w-[60%] mt-6'>
+              <hr className='border-[#aaa] border'/>
+              <h2 className='mb-3 mt-2 md:mb-2 md:mt-1 text-[#555] text-xs md:text-sm'>Scouts</h2>
+              <div className='w-full grid grid-cols-6 md:grid-cols-8 gap-1'>
+                {
+                  scouts.map((s) => <ScoutTile scout={s} navigate={navigate} />)
+                }
+              </div>
             </div>
-          </div>
+          : null
         }
       </div>
     </div>
