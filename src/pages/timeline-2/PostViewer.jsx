@@ -231,7 +231,7 @@ function ScoutTile({scout:s, navigate}) {
 function ScoutBadge({badge}) {
   if(!badge) return null;
   return (
-    <img src={badge} className='w-6 h-6 absolute -top-1/8 -left-1/8 p-1 bg-white rounded-full' />
+    <img src={badge} className='w-6 h-6 absolute -top-1/12 -left-1/12 sm:top-0 sm:left-0 md:-top-1/8 md:-left-1/8 p-1 bg-white rounded-full' />
   )
 }
 

@@ -15,7 +15,8 @@ import SilverWhale from '../../../assets/whales/trophy/silver.svg';
 import GoldWhale from '../../../assets/whales/trophy/gold.svg';
 
 import { collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
-import { db } from '../../../firebase';
+import { db, storage } from '../../../firebase';
+import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 export function PostEditor({post, whales, setSelected, refreshPosts}) {
 
