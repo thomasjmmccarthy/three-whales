@@ -155,7 +155,7 @@ function LeaderboardItem({s, i, setSelected}) {
         <div className='w-10 md:w-14 shrink-0 aspect-square overflow-hidden border-2 flex jusitfy-center items-center rounded-md'>
           {
             s.pfp
-            ? <img src={s.pfp.url} className='object-cover' />
+            ? <img src={s.pfp.url} className='object-cover w-full h-full' />
             : <User size={40} className='w-full' />
           }
         </div>
@@ -209,7 +209,7 @@ function LeaderboardViewer({selected, setSelected}) {
             <div className='w-10 md:w-14 shrink-0 aspect-square overflow-hidden border-2 flex jusitfy-center items-center rounded-md'>
               {
                 s.pfp
-                ? <img src={s.pfp.url} className='object-cover' />
+                ? <img src={s.pfp.url} className='object-cover w-full h-full' />
                 : <User size={40} className='w-full' />
               }
             </div>

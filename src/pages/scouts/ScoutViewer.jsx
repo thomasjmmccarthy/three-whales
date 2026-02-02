@@ -148,7 +148,7 @@ function Scout({scout, posts, whales, navigate, baseDelay=0}) {
           <div className='relative w-30 mb-5'>
             <div className='w-full aspect-square overflow-hidden flex justify-center items-center border-2 rounded-md'>
               {scout.pfp
-              ? <img src={scout.pfp.url} className='object-cover' />
+              ? <img src={scout.pfp.url} className='object-cover w-full h-full' />
               : <User size={60} />
               }
             </div>

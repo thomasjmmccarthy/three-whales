@@ -147,7 +147,7 @@ function ScoutTile({s, i}) {
         <div className='w-full aspect-square rounded-t-md overflow-hidden flex justify-center items-center'>
           {
             s.pfp 
-            ? <img className='object-cover' src={s.pfp?.url} />
+            ? <img className='object-cover w-full h-full' src={s.pfp?.url} />
             : <User size={is('md') ? 60 : 50} />
           }
         </div>

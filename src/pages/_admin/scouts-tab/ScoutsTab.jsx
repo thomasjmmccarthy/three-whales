@@ -340,7 +340,7 @@ function ScoutList({pageSize, setSelected, refreshKey, editMode, editSelected, s
               {
                 s.pfp && 
                 <div className='w-12 shrink-0 rounded-md aspect-square overflow-hidden flex items-center justify-center'>
-                  <img src={s.pfp.url} className='object-cover object-center' />
+                  <img src={s.pfp.url} className='object-cover w-full h-full' />
                 </div>
               }
             </div>
@@ -613,7 +613,7 @@ function ScoutEditor({scout, whales, setSelected, refreshScouts, isUnapproved}) 
           <div onClick={() => inputRef.current?.click()}  className='w-32.5 aspect-square overflow-hidden rounded-md flex justify-center items-center border-2 cursor-pointer transition-all hover:opacity-70'>
             {
               pfp
-              ? <img src={pfp.url} className='object-cover' />
+              ? <img src={pfp.url} className='object-cover w-full h-full' />
               : <User size={60} />
             }
           </div>

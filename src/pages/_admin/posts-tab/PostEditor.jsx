@@ -546,7 +546,7 @@ function ScoutPicker({ allScouts, selectedScouts, onAdd }) {
                   <span className='flex justify-center w-8 aspect-square overflow-hidden'>
                     {
                       scout.pfp
-                      ? <img src={scout.pfp.url} className='w-8 rounded-full border' />
+                      ? <img src={scout.pfp.url} className='object-cover w-full h-full rounded-full border' />
                       : <User width={32} height={32} className='rounded-full border border-black text-[#999]' />
                     }
                   </span>
