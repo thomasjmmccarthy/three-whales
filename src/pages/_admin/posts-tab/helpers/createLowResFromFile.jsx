@@ -1,4 +1,4 @@
-export async function createLowResImage(file, maxSize = 300) {
+export async function createLowResFromFile(file, maxSize = 300) {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const url = URL.createObjectURL(file);

@@ -33,17 +33,6 @@ export function LanePlan(dateGroups) {
     // Exit values are same as entrance values by default
     const xExit = { ...xEntry };
     const exitOffset = { ...entryOffset }
-    
-    // OLD LOGIC:
-    // Lines only turn after stations. So xExit only needs to be recalculated if
-    // there is a station in this block. Otherwise it should carry on straight.
-    // const posts = dateGroups[i].posts;
-    // let hasStation = { blue: false, green: false, purple: false };
-    // for(const p of posts) {
-    //   for(const w of WHALES) {
-    //     hasStation[w] = hasStation[w] || p.whales.includes(w);
-    //   }
-    // }
 
     // Lines turn under the conditions:
     // A: there is a station in the next block that occupies this whale's current lane, but does not include this whale
@@ -60,7 +49,8 @@ export function LanePlan(dateGroups) {
         firstStationMet[w] = firstStationMet[w] || p.whales.includes(w);
       }
 
-      if (!xEntry[w] && firstStationMet[w]) {
+      // If this is the first block in which this whale appears
+      if (xEntry[w] === null && firstStationMet[w]) {
         const postsWithWhale = posts.find(p => p.whales.includes(w));
         if (postsWithWhale) {
           const ws = postsWithWhale.whales;
@@ -68,7 +58,6 @@ export function LanePlan(dateGroups) {
 
           xExit[w] = getLaneX(ws);
           exitOffset[w] = getLaneOffset(ws.length, j);
-          continue;
         }
       }
 
@@ -91,7 +80,6 @@ export function LanePlan(dateGroups) {
           }
         }
       }
-
     }
     
     // Recalculate the exit values for the relevant whales
@@ -102,6 +90,8 @@ export function LanePlan(dateGroups) {
         exitOffset[w] = nextOffset;
       }
     }
+
+    console.log(i, ':', shouldTurn)
 
     // Append this blocks details to the lists
     xEntries.push(xEntry);

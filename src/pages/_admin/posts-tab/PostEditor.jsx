@@ -17,7 +17,8 @@ import GoldWhale from '../../../assets/whales/trophy/gold.svg';
 import { collection, doc, getDocs, setDoc } from 'firebase/firestore';
 import { db, storage } from '../../../firebase';
 import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { createLowResImage } from './helpers/createLowResImage';
+import { createLowResFromFile } from './helpers/createLowResFromFile';
+import { createLowResFromUrl } from './helpers/createLowResFromUrl';
 
 export function PostEditor({post, whales, setSelected, refreshPosts}) {
 
@@ -56,6 +57,7 @@ export function PostEditor({post, whales, setSelected, refreshPosts}) {
     }));
     return existing;
   }, [post]);
+
   const [gallery, setGallery] = useState(initialGallery);
   const [removedStoragePaths, setRemovedStoragePaths] = useState([]);
 
@@ -170,19 +172,46 @@ export function PostEditor({post, whales, setSelected, refreshPosts}) {
         }
 
         for(const img of gallery) {
-          //EXISTING
           if(img.kind === 'existing') {
-            uploadedOrExisting.push({
-              url: img.url,
-              storagePath: img.storagePath,
-              lowResUrl: img.lowResUrl || null,
-              lowResPath: img.lowResPath || null
-            });
+
+            if(img.lowResUrl && img.lowResPath) {
+              uploadedOrExisting.push({
+                url: img.url,
+                storagePath: img.storagePath,
+                lowResUrl: img.lowResUrl,
+                lowResPath: img.lowResPath
+              });
+              tick();
+              continue;
+            }
+
+            // Fallback in case lowRes does not exist - create it
+            try {
+              const lowResBlob = await createLowResFromUrl(img.url);
+              const lowResPath = `posts/${post.uid}/lowres_${img.id}.jpg`;
+              const lowResRef = ref(storage, lowResPath);
+              await uploadBytes(lowResRef, lowResBlob);
+              const lowResUrl = await getDownloadURL(lowResRef);
+              uploadedOrExisting.push({
+                url: img.url,
+                storagePath: img.storagePath,
+                lowResUrl,
+                lowResPath
+              });
+            }
+            catch(err) {
+              console.warn('Failed to generate low-res image', err);
+              uploadedOrExisting.push({
+                url: img.url,
+                storagePath: img.storagePath,
+                lowResUrl: null,
+                lowResPath: null
+              });
+            }
+
             tick();
             continue;
           }
-
-          console.log("uploading new image:", img);
 
           // NEW IMAGE
           const file = img.file;
@@ -191,9 +220,7 @@ export function PostEditor({post, whales, setSelected, refreshPosts}) {
           const storagePath = `posts/${post.uid}/${img.id}.${ext}`;
           const storageRef = ref(storage, storagePath);
 
-          console.log("creating low res of", file);
-          const lowResBlob = await createLowResImage(file);
-          console.log("low res blob created", lowResBlob);
+          const lowResBlob = await createLowResFromFile(file);
           const lowResPath = `posts/${post.uid}/lowres_${img.id}.jpg`;
           const lowResRef = ref(storage, lowResPath);
 
