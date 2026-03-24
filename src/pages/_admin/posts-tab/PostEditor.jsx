@@ -50,7 +50,9 @@ export function PostEditor({post, whales, setSelected, refreshPosts}) {
       id: `s:${img.storagePath}`,
       kind: 'existing',
       url: img.url,
-      storagePath: img.storagePath
+      storagePath: img.storagePath,
+      lowResUrl: img.lowResUrl || null,
+      lowResPath: img.lowResPath || null
     }));
     return existing;
   }, [post]);
