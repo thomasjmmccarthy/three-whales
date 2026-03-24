@@ -113,18 +113,30 @@ function ScoutSection({scouts, heading, tagline}) {
     <div key={heading}>
       <h2 className='text-xl md:text-2xl'>{heading}</h2>
       <p className='border-b-2 border-[#aaa] text-xs md:text-sm italic text-[#555] pb-2'>{tagline}</p>
-      <div className='w-full mt-4 grid gap-2 md:gap-4 grid-cols-3 sm:grid-cols-5 md:grid-cols-8 lg:grid-cols-9'>
+      <motion.div 
+        initial='hidden'
+        animate='show'
+        variants={{
+          hidden: {},
+          show: {
+            transition: {
+              staggerChildren: 0.1
+            }
+          }
+        }}
+        className='w-full mt-4 grid gap-2 md:gap-4 grid-cols-3 sm:grid-cols-5 md:grid-cols-8 lg:grid-cols-9'
+      >
         {
-          scouts.map((s, i) => <ScoutTile key={s.uid} s={s} i={i} />)
+          scouts.map((s) => <ScoutTile key={s.uid} s={s} />)
         }
-      </div>
+      </motion.div>
     </div>
   )
 }
 
 
-function ScoutTile({s, i}) {
-  const delayMultiplier = 0.1;
+function ScoutTile({s}) {
+
   const scoutBadge = getScoutBadge(s);
   const navigate = useNavigate();
 
@@ -132,9 +144,11 @@ function ScoutTile({s, i}) {
 
   return (
     <motion.div
-      initial={{opacity:0, scale:0.8}}
-      animate={{opacity:1, scale:1}}
-      transition={{duration:1, type:'spring', delay: i * delayMultiplier}}
+      variants={{
+        hidden: { opacity: 0 },
+        show: { opacity: 1 }
+      }}
+      transition={{duration:0.1}}
       className='cursor-pointer'
       onClick={() => navigate(`/scouts/${s.uid}`)}
     >
@@ -147,7 +161,15 @@ function ScoutTile({s, i}) {
         <div className='w-full aspect-square rounded-t-md overflow-hidden flex justify-center items-center'>
           {
             s.pfp 
-            ? <img className='object-cover w-full h-full' src={s.pfp?.url} />
+            ? <>
+                <img 
+                  loading='lazy' 
+                  onLoad={(e) => e.currentTarget.classList.add('opacity-100')} 
+                  className='object-cover w-full h-full z-1 opacity-0 transition-opacity'
+                  src={s.pfp?.url} 
+                />
+                <User size={is('md') ? 60 : 50} className='absolute opacity-40 animate-pulse' />
+              </>
             : <User size={is('md') ? 60 : 50} />
           }
         </div>
@@ -156,7 +178,7 @@ function ScoutTile({s, i}) {
         </div>
         {
           scoutBadge && 
-          <div className='absolute right-0 top-0 w-8 translate-x-1/4 -translate-y-1/4 md:w-10 bg-white rounded-full p-0.5 md:p-1'>
+          <div className='absolute z-2 right-0 top-0 w-8 translate-x-1/4 -translate-y-1/4 md:w-10 bg-white rounded-full p-0.5 md:p-1'>
             <img src={scoutBadge} />
           </div>
         }

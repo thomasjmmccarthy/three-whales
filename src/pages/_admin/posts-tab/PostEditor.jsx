@@ -14,14 +14,15 @@ import BronzeWhale from '../../../assets/whales/trophy/bronze.svg';
 import SilverWhale from '../../../assets/whales/trophy/silver.svg';
 import GoldWhale from '../../../assets/whales/trophy/gold.svg';
 
-import { collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, setDoc } from 'firebase/firestore';
 import { db, storage } from '../../../firebase';
 import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { createLowResImage } from './helpers/createLowResImage';
 
 export function PostEditor({post, whales, setSelected, refreshPosts}) {
 
   const CHARACTER_LIMIT = 1000;
-  const MAX_IMAGES = 10;
+  const MAX_IMAGES = 15;
 
   // Details
   const [blueWhale, setBlueWhale] = useState(post.whales.includes('blue'));
@@ -132,7 +133,7 @@ export function PostEditor({post, whales, setSelected, refreshPosts}) {
     setGallery((prev) => {
       const item = prev.find((x) => x.id === id);
       if(item?.kind === 'new') URL.revokeObjectURL(item.previewUrl);
-      else setRemovedStoragePaths((d) => [...d, item.storagePath])
+      else setRemovedStoragePaths((d) => [...d, item.storagePath, item.lowResPath])
       return prev.filter((x) => x.id !== id);
     })
     setEdited(true);
@@ -164,21 +165,39 @@ export function PostEditor({post, whales, setSelected, refreshPosts}) {
               return {
                 url: img.url,
                 storagePath: img.storagePath,
+                lowResUrl: img.lowResUrl || null,
+                lowResPath: img.lowResPath || null
               };
             }
 
             // Upload new images
             const file = img.file;
             const ext = file.name.split(".").pop()?.toLowerCase() || '.jpg';
+
+            // FULL IMAGE
             const storagePath = `posts/${post.uid}/${img.id}.${ext}`;
             const storageRef = ref(storage, storagePath);
-            await uploadBytes(storageRef, file);
 
-            const url = await getDownloadURL(storageRef);
+            // LOW-RES IMAGE
+            const lowResBlob = await createLowResImage(file);
+            const lowResPath = `posts/${post.uid}/lowres_${img.id}.jpg`;
+            const lowResRef = ref(storage, lowResPath);
+
+            await Promise.all([
+              uploadBytes(storageRef, file),
+              uploadBytes(lowResRef, lowResBlob)
+            ])
+
+            const [url, lowResUrl] = await Promise.all([
+              getDownloadURL(storageRef),
+              getDownloadURL(lowResRef)
+            ]);
 
             return {
               url,
-              storagePath
+              storagePath,
+              lowResUrl,
+              lowResPath
             }
           })
         );

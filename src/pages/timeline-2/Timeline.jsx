@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getWhaleColour, groupPostsByDate } from "./Helpers";
-import { collection, getDocs, limit, orderBy, query, startAfter, where } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, limit, orderBy, query, startAfter, where } from "firebase/firestore";
 import { db } from "../../firebase";
 import { LanePlan } from "./LanePlan";
 import { DateBlock } from "./DateBlock";
@@ -14,6 +14,7 @@ import BlueWhale from '../../assets/whales/normal/blue.svg';
 import GreenWhale from '../../assets/whales/normal/green.svg';
 import PurpleWhale from '../../assets/whales/normal/purple.svg';
 import { useNavigate } from "react-router-dom";
+import { BlockPreview } from "./BlockPreview";
 
 
 export default function Timeline({ selected, pageSize=20, whaleData }) {
@@ -21,6 +22,7 @@ export default function Timeline({ selected, pageSize=20, whaleData }) {
   const [mousePos, setMousePos] = useState({x:0, y:0});
 
   const [highlighted, setHighlighted] = useState(null);
+
   const [posts, setPosts] = useState([]);
   const [lastDoc, setLastDoc] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -28,6 +30,9 @@ export default function Timeline({ selected, pageSize=20, whaleData }) {
 
   const [canOpen, setCanOpen] = useState(false);
   const OPEN_TIMER = 1500;
+
+  const [activeBlock, setActiveBlock] = useState(null);
+  const blockRefs = useRef([]);
 
   const sentinelRef = useRef(null);
   const loadingRef = useRef(false);
@@ -97,6 +102,33 @@ export default function Timeline({ selected, pageSize=20, whaleData }) {
     setMousePos({x: e.clientX, y: e.clientY});
   }
 
+  const handleMouseExitTimeline = () => {
+    if(activeBlock) setActiveBlock(null);
+  }
+
+  useEffect(() => {
+    if (!is('lg')) return;
+
+    let closest = null;
+    let minDist = Infinity;
+
+    blockRefs.current.forEach((el, i) => {
+      if (!el) return;
+
+      const rect = el.getBoundingClientRect();
+      const centerY = rect.top + rect.height / 2;
+
+      const dist = Math.abs(mousePos.y - centerY);
+
+      if (dist < minDist) {
+        minDist = dist;
+        closest = i;
+      }
+    });
+
+    setActiveBlock(closest);
+  }, [mousePos, is]);
+
   const { 
     xEntries,
     xExits,
@@ -134,73 +166,85 @@ export default function Timeline({ selected, pageSize=20, whaleData }) {
     }, OPEN_TIMER);
     return () => clearTimeout(timer);
   }, []);
+
   
   return (
-    <AnimatePresence mode='wait'>
-      { ((canOpen === false && !selected) || (xEntries.length === 0 && loading))
-        ? <TimelineLoader key='loader' timer={OPEN_TIMER} />
-        : (
-          <motion.div
-            key='timeline'
-            initial={{opacity:0}}
-            animate={{opacity:1}}
-            transition={{duration: 0.25, ease: 'easeOut'}}
-          >
-            <motion.div
-              className='w-full mb-10 min-h-50 md:h-25 md:min-h-0 md:mb-40 flex justify-center items-end'
-              initial={{scale: 0.8, opacity: 0}}
-              animate={{scale: 1, opacity: 1}}
-              transition={{duration: 0.5, delay: 0.2, type:'spring'}}
-            >
-              <p className='text-[#aaa] select-none text-sm md:text-[16px]'>{is('md') ? 'Click on' : 'Tap'} a stop to see more</p>
-            </motion.div>
-            <div className={`relative w-full scale-85 md:scale-115 md:mb-10 ${(!is('md') && highlighted ? '-mb-10' : '-mb-30')}`} onMouseMove={handleMouseMove}> 
-              {dateGroups.map((d, i) => {
-                let newYear;
-                let newMonth;
-                if(i !== dateGroups.length - 1) {
-                  const year = d.date.split('-')[0];
-                  const month = d.date.split('-')[1];
-                  newYear = year !== dateGroups[i+1].date.split('-')[0];
-                  newMonth = newYear || month !== dateGroups[i+1].date.split('-')[1];
-                };
-                return (
-                  <DateBlock
-                    i={i}
-                    key={d.date}
-                    dateKey={d.date}
-                    posts={d.posts}
-
-                    xEntry={xEntries[i]}
-                    xExit={xExits[i]}
-                    entryOffset={entryOffsets[i]}
-                    exitOffset={exitOffsets[i]}
-
-                    highlighted={highlighted}
-                    handleHighlightEnter={handleHighlightEnter}
-                    handleHighlightExit={handleHighlightExit}
-
-                    getNextPosts={getNextPosts}
-                    is={is}
-
-                    newYear={newYear}
-                    newMonth={newMonth}
-                  />
-              )})}
-            </div>
-
-            <AnimatePresence>{(highlighted && is('md')) &&
-              <HighlightCard highlighted={highlighted} mousePos={mousePos} whaleData={whaleData} />
-            }</AnimatePresence>
-
-            <AnimatePresence>{(highlighted && !selected && !is('md')) &&
-              <HighlightCardMobile highlighted={highlighted} whaleData={whaleData} />
-            }</AnimatePresence>
-            <div ref={sentinelRef} className='h-10' />
-          </motion.div>
-        )
+    <>
+      {
+        (is('lg') && activeBlock !== null && dateGroups) 
+        ? <BlockPreview block={dateGroups[activeBlock]} mouseY={mousePos.y} highlighted={highlighted} />
+        : null
       }
-    </AnimatePresence>
+      <AnimatePresence mode='wait'>
+        { ((canOpen === false && !selected) || (xEntries.length === 0 && loading))
+          ? <TimelineLoader key='loader' timer={OPEN_TIMER} />
+          : (
+            <motion.div
+              key='timeline'
+              initial={{opacity:0}}
+              animate={{opacity:1}}
+              transition={{duration: 0.25, ease: 'easeOut'}}
+              onMouseLeave={handleMouseExitTimeline}
+            >
+              <motion.div
+                className='w-full -mb-5 min-h-60 md:h-25 md:min-h-0 md:mb-50 flex justify-center items-end'
+                initial={{scale: 0.8, opacity: 0}}
+                animate={{scale: 1, opacity: 1}}
+                transition={{duration: 0.5, delay: 0.2, type:'spring'}}
+              >
+                <p className='text-[#aaa] select-none text-sm md:text-[16px]'>{is('md') ? 'Click on' : 'Tap'} a stop to see more</p>
+              </motion.div>
+              <div className={`relative w-full scale-85 md:scale-115 md:mb-10 ${(!is('md') && highlighted ? '-mb-10' : '-mb-30')}`} onMouseMove={handleMouseMove}> 
+                {dateGroups.map((d, i) => {
+                  let newYear;
+                  let newMonth;
+                  if(i !== dateGroups.length - 1) {
+                    const year = d.date.split('-')[0];
+                    const month = d.date.split('-')[1];
+                    newYear = year !== dateGroups[i+1].date.split('-')[0];
+                    newMonth = newYear || month !== dateGroups[i+1].date.split('-')[1];
+                  };
+                  return (
+                    <div key={d.date} ref={(el) => {blockRefs.current[i] = el;}} >
+                      <DateBlock
+                        i={i}
+                        key={d.date}
+                        dateKey={d.date}
+                        posts={d.posts}
+
+                        xEntry={xEntries[i]}
+                        xExit={xExits[i]}
+                        entryOffset={entryOffsets[i]}
+                        exitOffset={exitOffsets[i]}
+
+                        highlighted={highlighted}
+                        handleHighlightEnter={handleHighlightEnter}
+                        handleHighlightExit={handleHighlightExit}
+
+                        isActiveBlock={activeBlock === i}
+                        getNextPosts={getNextPosts}
+                        is={is}
+
+                        newYear={newYear}
+                        newMonth={newMonth}
+                      />
+                    </div>
+                )})}
+              </div>
+
+              <AnimatePresence>{(highlighted && is('md')) &&
+                <HighlightCard highlighted={highlighted} mousePos={mousePos} whaleData={whaleData} />
+              }</AnimatePresence>
+
+              <AnimatePresence>{(highlighted && !selected && !is('md')) &&
+                <HighlightCardMobile highlighted={highlighted} whaleData={whaleData} />
+              }</AnimatePresence>
+              <div ref={sentinelRef} className='h-10' />
+            </motion.div>
+          )
+        }
+      </AnimatePresence>
+    </>
   )
 }
 

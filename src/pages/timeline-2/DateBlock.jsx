@@ -9,6 +9,7 @@ export function DateBlock({
   i, dateKey, posts, 
   xEntry, xExit, entryOffset, exitOffset, 
   highlighted, handleHighlightEnter, handleHighlightExit, 
+  isActiveBlock,
   getNextPosts, is,
   newYear, newMonth
 }) {
@@ -26,15 +27,6 @@ export function DateBlock({
 
   // Turn the provided parameters into graphic data
   let { stations, lineCoords } = useMemo(() => { return getGraphData(i, posts, xEntry, xExit, entryOffset, exitOffset, blockHeight, stationY, turnY, getNextPosts); });
-
-  function useDashedLine(w) {
-    let hasStation = false;
-    for(const s of stations) {
-      if(s.post.whales.includes(w)) hasStation = true;
-    }
-    let outOfLane = LANES[w] !== xEntry[w];
-    return (outOfLane && !hasStation);
-  }
 
   return (
     <div className='relative w-full flex justify-center' key={dateKey}>
@@ -64,8 +56,8 @@ export function DateBlock({
             y1={stationY}
             x2={viewWidth}
             y2={stationY}
-            stroke='rgba(0,0,0,0.05)'
-            strokeWidth='1'
+            stroke={isActiveBlock ? 'rgba(0,125,255,0.2)' : 'rgba(0,0,0,0.05)'}
+            strokeWidth={isActiveBlock ? '1.5' : '1'}
           />
 
           {/* Whale Lines */}
@@ -76,12 +68,6 @@ export function DateBlock({
               fill='none'
               stroke={window.getComputedStyle(document.documentElement).getPropertyValue(`--whale-${w}`)}
               strokeWidth={LANE_WIDTH}
-              strokeOpacity={
-                useDashedLine(w)
-                ? 0.5
-                : 1
-              }
-              strokeDasharray={useDashedLine(w) ? '1 8 0' : 'none'}
               strokeLinecap='round'
             />
           ))}
@@ -94,7 +80,7 @@ export function DateBlock({
                 key={s.post.uid}
                 cx={s.x}
                 cy={s.y}
-                r={isHighlighted ? (parseInt(stationRadius) + 2).toString() : stationRadius}
+                r={isHighlighted ? (parseInt(stationRadius) + 2).toString() : isActiveBlock ? (parseInt(stationRadius) + 1).toString() : stationRadius}
                 fill={isHighlighted ? '#fdcb6e' : 'white'}
                 stroke='rgba(0,0,0.35)'
                 strokeWidth={stationStrokeWidth}

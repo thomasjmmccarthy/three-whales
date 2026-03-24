@@ -1,9 +1,9 @@
-import { collection, doc, getDoc, getDocs, limit, orderBy, query, startAfter, setDoc, where, deleteDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, limit, orderBy, query, startAfter, where, deleteDoc } from "firebase/firestore";
 import { ref, deleteObject } from "firebase/storage";
 import { AnimatePresence, motion } from "motion/react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { db, getAllWhales, storage } from "../../../firebase";
-import { PlusSquare, ArrowRight, ArrowLeft, SquareCheck, Ellipsis, Square, Trash } from "lucide-react";
+import { PlusSquare, ArrowRight, ArrowLeft, SquareCheck, Ellipsis, Square, Trash, Scale } from "lucide-react";
 import WhaleLoader from "../../../components/loader/WhaleLoader";
 
 import BlueWhale from '../../../assets/whales/normal/blue.svg';
@@ -11,6 +11,7 @@ import GreenWhale from '../../../assets/whales/normal/green.svg';
 import PurpleWhale from '../../../assets/whales/normal/purple.svg';
 import { getAuth } from "firebase/auth";
 import { PostEditor } from "./PostEditor";
+import { Rules } from "./Rules";
 
 export default function PostsTab() {
 
@@ -22,6 +23,7 @@ export default function PostsTab() {
   const [editMode, setEditMode] = useState(false);
   const [editSelected, setEditSelected] = useState([]);
   const [deleting, setDeleting] = useState(false);
+  const [rulesOpen, setRulesOpen] = useState(false);
   const PAGE_SIZE = 20;
 
   const handleCreateBlankPost = () => {
@@ -107,7 +109,6 @@ export default function PostsTab() {
       transition={{ duration: 0.1 }}
       className='relative'
     >
-
       <AnimatePresence> { selected !== null &&
         <motion.div 
           initial={{ opacity: 0 }}
@@ -116,6 +117,17 @@ export default function PostsTab() {
           transition={{ duration: 0.1 }}
         >
           <PostEditor post={selected} whales={whales} setSelected={setSelected} refreshPosts={refreshPosts} />
+        </motion.div>
+      }</AnimatePresence>
+
+      <AnimatePresence> { rulesOpen &&
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.1 }}
+        >
+          <Rules setRulesOpen={setRulesOpen} />
         </motion.div>
       }</AnimatePresence>
 
@@ -166,11 +178,18 @@ export default function PostsTab() {
         )
         : (
           <div className='absolute w-full top-0 flex pr-2 pl-2 justify-between items-center gap-8 md:justify-end'>
-            <Ellipsis
-              onClick={() => {setEditSelected([]); setEditMode(true)}}
-              className='cursor-pointer transition-all hover:opacity-75'
-              size={25}
-            />
+            <div className='flex gap-8 items-center'>
+              <Scale 
+                onClick={() => {setRulesOpen(true)}}
+                className='cursor-pointer transition-all hover:opacity-75'
+                size={25}
+              />
+              <Ellipsis
+                onClick={() => {setEditSelected([]); setEditMode(true)}}
+                className='cursor-pointer transition-all hover:opacity-75'
+                size={25}
+              />
+            </div>
             <PlusSquare 
               onClick={handleCreateBlankPost} 
               className='cursor-pointer transition-all hover:opacity-75' 
@@ -349,6 +368,7 @@ function PostList({pageSize, whales, setSelected, refreshKey, draft, editMode, e
           </div>
         )
       })}
+      {hasMore && <div ref={sentinelRef} className="h-10" />}
     </div>
   )
 }

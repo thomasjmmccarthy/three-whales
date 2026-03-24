@@ -20,6 +20,8 @@ export function LanePlan(dateGroups) {
   const entryOffsets = [];
   const exitOffsets = [];
 
+  let firstStationMet = { blue: false, green: false, purple: false };
+
   for(let i = 0; i < dateGroups.length; i++) {
 
     function getLastFrom(array) { return(i==0) ? {blue:null, green:null, purple:null} : array[i-1] };
@@ -32,19 +34,69 @@ export function LanePlan(dateGroups) {
     const xExit = { ...xEntry };
     const exitOffset = { ...entryOffset }
     
+    // OLD LOGIC:
     // Lines only turn after stations. So xExit only needs to be recalculated if
     // there is a station in this block. Otherwise it should carry on straight.
+    // const posts = dateGroups[i].posts;
+    // let hasStation = { blue: false, green: false, purple: false };
+    // for(const p of posts) {
+    //   for(const w of WHALES) {
+    //     hasStation[w] = hasStation[w] || p.whales.includes(w);
+    //   }
+    // }
+
+    // Lines turn under the conditions:
+    // A: there is a station in the next block that occupies this whale's current lane, but does not include this whale
+    // B: there is a station in the next block for the current whale
     const posts = dateGroups[i].posts;
-    let hasStation = { blue: false, green: false, purple: false };
-    for(const p of posts) {
-      for(const w of WHALES) {
-        hasStation[w] = hasStation[w] || p.whales.includes(w);
+    const nextPosts = dateGroups[i+1]?.posts ?? [];
+    const currentLane = { ...xEntry };
+
+    let shouldTurn = { blue: false, green: false, purple: false }
+
+    for(const w of WHALES) {
+
+      for(const p of posts) {
+        firstStationMet[w] = firstStationMet[w] || p.whales.includes(w);
       }
+
+      if (!xEntry[w] && firstStationMet[w]) {
+        const postsWithWhale = posts.find(p => p.whales.includes(w));
+        if (postsWithWhale) {
+          const ws = postsWithWhale.whales;
+          const j = ws.indexOf(w);
+
+          xExit[w] = getLaneX(ws);
+          exitOffset[w] = getLaneOffset(ws.length, j);
+          continue;
+        }
+      }
+
+      // Determine if the whale needs to turn for the next block
+      for(const p of nextPosts) {
+        const ws = p.whales;
+        const nextX = getLaneX(ws);
+
+        if(firstStationMet[w]) {
+          // CONDITION B - next block has a station for this whale
+          if(ws.includes(w)) {
+            shouldTurn[w] = true;
+            break;
+          }
+
+          // CONDITION A - next block uses this lane for other whales
+          if(nextX === currentLane[w]) {
+            shouldTurn[w] = true;
+            break;
+          }
+        }
+      }
+
     }
     
     // Recalculate the exit values for the relevant whales
     for(const w of WHALES) {
-      if(hasStation[w]) {
+      if(shouldTurn[w]) {
         const { nextX, nextOffset } = getNextX(w, dateGroups, i);
         xExit[w] = nextX;
         exitOffset[w] = nextOffset;

@@ -347,6 +347,7 @@ function ScoutList({pageSize, setSelected, refreshKey, editMode, editSelected, s
           </div>
         )
       })}
+      {hasMore && <div ref={sentinelRef} className="h-10" />}
     </div>
   )
 }

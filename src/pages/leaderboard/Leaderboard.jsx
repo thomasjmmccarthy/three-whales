@@ -32,7 +32,7 @@ export function Leaderboard() {
       );
 
       const snaps = await getDocs(q);
-      const data = snaps.docs.map(doc => doc.data());
+      const data = snaps.docs.map(doc => doc.data()).filter((d) => !d.draft);
       setPosts(data);
     }
     getPosts();
