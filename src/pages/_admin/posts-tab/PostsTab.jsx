@@ -58,9 +58,13 @@ export default function PostsTab() {
 
           const gallery = post.gallery ?? [];
           const paths = gallery.map((img) => img?.storagePath).filter(Boolean);
+          const lowResPaths = gallery.map((img) => img?.lowResPath).filter(Boolean);
 
           await Promise.allSettled(
             paths.map((path) => deleteObject(ref(storage, path)))
+          );
+          await Promise.allSettled(
+            lowResPaths.map((path) => deleteObject(ref(storage, path)))
           );
 
           await deleteDoc(postRef);

@@ -40,6 +40,7 @@ export function PostEditor({post, whales, setSelected, refreshPosts}) {
   const [fullTitle, setFullTitle] = useState('');
   const [edited, setEdited] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [progress, setProgress] = useState(0); // 0 -> 1
 
   // Gallery
   const initialGallery = useMemo(() => {
@@ -157,50 +158,60 @@ export function PostEditor({post, whales, setSelected, refreshPosts}) {
       try {
         if(!post?.uid) throw new Error("Missing post id");
 
-        // Upload all images in parallel, then rebuild ordered list
-        const uploadedOrExisting = await Promise.all(
-          gallery.map(async (img) => {
-            // Keep existing as-is
-            if(img.kind === 'existing') {
-              return {
-                url: img.url,
-                storagePath: img.storagePath,
-                lowResUrl: img.lowResUrl || null,
-                lowResPath: img.lowResPath || null
-              };
-            }
+        const uploadedOrExisting = [];
+        const totalTasks = gallery.length + removedStoragePaths.length + 1;
+        let completed = 0;
 
-            // Upload new images
-            const file = img.file;
-            const ext = file.name.split(".").pop()?.toLowerCase() || '.jpg';
+        function tick() {
+          completed++;
+          setProgress(completed / totalTasks);
+        }
 
-            // FULL IMAGE
-            const storagePath = `posts/${post.uid}/${img.id}.${ext}`;
-            const storageRef = ref(storage, storagePath);
+        for(const img of gallery) {
+          //EXISTING
+          if(img.kind === 'existing') {
+            uploadedOrExisting.push({
+              url: img.url,
+              storagePath: img.storagePath,
+              lowResUrl: img.lowResUrl || null,
+              lowResPath: img.lowResPath || null
+            });
+            tick();
+            continue;
+          }
 
-            // LOW-RES IMAGE
-            const lowResBlob = await createLowResImage(file);
-            const lowResPath = `posts/${post.uid}/lowres_${img.id}.jpg`;
-            const lowResRef = ref(storage, lowResPath);
+          console.log("uploading new image:", img);
 
-            await Promise.all([
-              uploadBytes(storageRef, file),
-              uploadBytes(lowResRef, lowResBlob)
-            ])
+          // NEW IMAGE
+          const file = img.file;
+          const ext = file.name.split(".").pop()?.toLowerCase() || 'jpg';
 
-            const [url, lowResUrl] = await Promise.all([
-              getDownloadURL(storageRef),
-              getDownloadURL(lowResRef)
-            ]);
+          const storagePath = `posts/${post.uid}/${img.id}.${ext}`;
+          const storageRef = ref(storage, storagePath);
 
-            return {
-              url,
-              storagePath,
-              lowResUrl,
-              lowResPath
-            }
-          })
-        );
+          console.log("creating low res of", file);
+          const lowResBlob = await createLowResImage(file);
+          console.log("low res blob created", lowResBlob);
+          const lowResPath = `posts/${post.uid}/lowres_${img.id}.jpg`;
+          const lowResRef = ref(storage, lowResPath);
+
+          await uploadBytes(storageRef, file);
+          await uploadBytes(lowResRef, lowResBlob);
+
+          const [url, lowResUrl] = await Promise.all([
+            getDownloadURL(storageRef),
+            getDownloadURL(lowResRef)
+          ]);
+
+          uploadedOrExisting.push({
+            url,
+            storagePath,
+            lowResUrl,
+            lowResPath
+          });
+
+          tick();
+        }
 
         // Update post data
         const whalesArray = [];
@@ -224,13 +235,13 @@ export function PostEditor({post, whales, setSelected, refreshPosts}) {
 
         const postRef = doc(db, 'posts', post.uid);
         await setDoc(postRef, newPost, {merge: true});
+        tick();
 
         // Finally, remove any images that have been deleted
-        await Promise.allSettled(
-          removedStoragePaths.map((path) =>
-            deleteObject(ref(storage, path))
-          )
-        );
+        for (const path of removedStoragePaths) {
+          await deleteObject(ref(storage, path));
+          tick();
+        }
 
         // Force the PostsList to refresh
         refreshPosts();
@@ -243,6 +254,9 @@ export function PostEditor({post, whales, setSelected, refreshPosts}) {
       }
       catch(err) {
         console.error(err);
+      }
+      finally {
+        setProgress(0);
       }
     }
     setSaving(false);
@@ -263,6 +277,24 @@ export function PostEditor({post, whales, setSelected, refreshPosts}) {
             transition={{ duration: 0.1 }}
             className='fixed z-100 not-md:bg-white/90 not-md:p-3 not-md:pt-4 not-md:rounded-lg md:absolute right-4 top-0 md:right-8 md:top-8 flex gap-2 md:gap-4'
           >
+            <AnimatePresence>
+              {saving && (
+                <motion.div
+                  className="fixed top-0 left-0 w-full h-1 bg-[#eee] z-999"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <motion.div
+                    className="h-full bg-[#00b894]"
+                    style={{ width: `${progress * 100}%` }}
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progress * 100}%` }}
+                    transition={{ ease: "easeOut" }}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
             {
               post.draft && 
               <motion.button
