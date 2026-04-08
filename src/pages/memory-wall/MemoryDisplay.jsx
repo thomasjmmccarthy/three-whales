@@ -23,9 +23,9 @@ export function MemoryDisplay({selected, setSelected}) {
         onClick={() => setSelected(null)}
       >
         <motion.div
-          initial={{y: 400}}
-          animate={{y: 0}}
-          transition={{duration: 0.3, type: 'spring'}}
+          initial={{y: 400, opacity: 0}}
+          animate={{y: 0, opacity: 1}}
+          transition={{duration: 0.5, delay: 0.25, type: 'spring'}}
           className='w-[95%] max-w-100 bg-white rounded-lg p-4'
         >
           <div className='relative w-full aspect-square overflow-hidden transition-all'>
