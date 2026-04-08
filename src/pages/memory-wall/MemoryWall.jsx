@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowBigLeftDash, Heart } from "lucide-react";
 import { MemoryDisplay } from "./MemoryDisplay";
 import { getFormattedDate } from "../../components/date-formatter/DateFormatter";
+import { useTailwindScreen } from "../../components/screens/tailwind-screen/TailwindScreen";
 
 
 export function MemoryWall({year}) {
@@ -17,6 +18,8 @@ export function MemoryWall({year}) {
 
   const [highlighted, setHighlighted] = useState(null);
   const [selected, setSelected] = useState(null);
+
+  const { is } = useTailwindScreen();
 
   // Get posts from this year
   useEffect(() => {
@@ -37,6 +40,12 @@ export function MemoryWall({year}) {
     }
     getPosts();
   }, [year]);
+
+  const handleHighlight = (v) => {
+    if(is('md')) {
+      setHighlighted(v);
+    }
+  }
 
   // Get gallery
   useEffect(() => {
@@ -84,7 +93,7 @@ export function MemoryWall({year}) {
             postCount={posts.length} 
             year={year}
             highlighted={highlighted} 
-            setHighlighted={setHighlighted}
+            setHighlighted={handleHighlight}
             setSelected={setSelected}
           />
       }
