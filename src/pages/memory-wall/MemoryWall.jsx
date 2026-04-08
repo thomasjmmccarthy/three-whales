@@ -95,6 +95,7 @@ export function MemoryWall({year}) {
             highlighted={highlighted} 
             setHighlighted={handleHighlight}
             setSelected={setSelected}
+            is={is}
           />
       }
       </AnimatePresence>
@@ -105,7 +106,7 @@ export function MemoryWall({year}) {
 
 
 
-function Gallery({gallery, year, postCount, highlighted, setHighlighted, setSelected}) {
+function Gallery({gallery, year, postCount, highlighted, setHighlighted, setSelected, is}) {
 
   const navigate = useNavigate();
   const imageClass = 'object-cover w-full h-full rounded-lg transition-all duration-200 contrast-200'
@@ -124,7 +125,8 @@ function Gallery({gallery, year, postCount, highlighted, setHighlighted, setSele
         <h2 className='text-4xl'>{year}</h2>
         <Heart size={35} />
       </div>
-      <p className='mb-12'>{postCount} posts, {gallery.length} photos</p>
+      <p>{postCount} posts, {gallery.length} photos</p>
+      <p className='mb-13 mt-2 text-[#aaa] text-xs md:text-sm'>— {is('md') ? 'click' : 'tap'} on a photo to view —</p>
       <div 
         className='w-[95%] max-w-350 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 xl:grid-cols-7 opacity-80'
         onMouseLeave={handleMouseExit}
