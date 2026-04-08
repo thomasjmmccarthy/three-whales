@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { act, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getWhaleColour, groupPostsByDate } from "./Helpers";
 import { collection, doc, getDoc, getDocs, limit, orderBy, query, startAfter, where } from "firebase/firestore";
 import { db } from "../../firebase";
@@ -32,6 +32,7 @@ export default function Timeline({ selected, pageSize=20, whaleData }) {
   const OPEN_TIMER = 1500;
 
   const [activeBlock, setActiveBlock] = useState(null);
+  const [mouseOverTimeline, setMouseOverTimeline] = useState(false);
   const blockRefs = useRef([]);
 
   const sentinelRef = useRef(null);
@@ -39,6 +40,7 @@ export default function Timeline({ selected, pageSize=20, whaleData }) {
   const didInitRef = useRef(false);
 
   const { is } = useTailwindScreen();
+  const navigate = useNavigate();
 
   const dateGroups = useMemo(() => groupPostsByDate(posts), [posts]);
 
@@ -100,14 +102,24 @@ export default function Timeline({ selected, pageSize=20, whaleData }) {
 
   const handleMouseMove = (e) => {
     setMousePos({x: e.clientX, y: e.clientY});
+    if(mouseOverTimeline === false) setMouseOverTimeline(true);
+  }
+
+  const handleMouseOverTimeline = () => {
+    setMouseOverTimeline(true);
   }
 
   const handleMouseExitTimeline = () => {
-    if(activeBlock) setActiveBlock(null);
+    setMouseOverTimeline(false);
   }
 
+  // Set active block
   useEffect(() => {
     if (!is('lg')) return;
+    if (!mouseOverTimeline) {
+      setActiveBlock(null);
+      return;
+    }
 
     let closest = null;
     let minDist = Infinity;
@@ -171,8 +183,8 @@ export default function Timeline({ selected, pageSize=20, whaleData }) {
   return (
     <>
       {
-        (is('lg') && activeBlock !== null && dateGroups) 
-        ? <BlockPreview block={dateGroups[activeBlock]} mouseY={mousePos.y} highlighted={highlighted} />
+        (is('lg') && dateGroups)
+        ? <BlockPreview activeBlock={activeBlock} dateGroups={dateGroups} mouseY={mousePos.y} highlighted={highlighted} />
         : null
       }
       <AnimatePresence mode='wait'>
@@ -184,17 +196,26 @@ export default function Timeline({ selected, pageSize=20, whaleData }) {
               initial={{opacity:0}}
               animate={{opacity:1}}
               transition={{duration: 0.25, ease: 'easeOut'}}
-              onMouseLeave={handleMouseExitTimeline}
             >
               <motion.div
-                className='w-full -mb-5 min-h-60 md:h-25 md:min-h-0 md:mb-50 flex justify-center items-end'
+                className='relative w-full -mb-5 min-h-60 md:h-25 md:min-h-0 md:mb-50 flex flex-col justify-end items-center text-[#aaa] select-none text-center'
                 initial={{scale: 0.8, opacity: 0}}
                 animate={{scale: 1, opacity: 1}}
                 transition={{duration: 0.5, delay: 0.2, type:'spring'}}
               >
-                <p className='text-[#aaa] select-none text-sm md:text-[16px]'>{is('md') ? 'Click on' : 'Tap'} a stop to see more</p>
+                <p className='text-sm md:text-[16px]'>
+                  {is('md') ? 'Click on' : 'Tap'} a stop to see more<br/>
+                </p>
+                <p className='z-5 text-xs md:text-sm'>
+                  — or go to <u onClick={() => navigate('/memory-wall')} className='cursor-pointer hover:text-(--whale-blue) transition-color'>Memory Wall</u> —
+                </p>
               </motion.div>
-              <div className={`relative w-full scale-85 md:scale-115 md:mb-10 ${(!is('md') && highlighted ? '-mb-10' : '-mb-30')}`} onMouseMove={handleMouseMove}> 
+              <div 
+                className={`relative w-full scale-85 md:scale-115 md:mb-10 ${(!is('md') && highlighted ? '-mb-10' : '-mb-30')}`} 
+                onMouseMove={handleMouseMove}
+                onMouseEnter={handleMouseOverTimeline}
+                onMouseLeave={handleMouseExitTimeline}
+              > 
                 {dateGroups.map((d, i) => {
                   let newYear;
                   let newMonth;
@@ -260,7 +281,7 @@ function getWhaleName(whaleData, w) {
 function HighlightCard({highlighted, mousePos, whaleData}) {
   return (
     <motion.div 
-      className='fixed z-20'
+      className='fixed pointer-events-none z-20'
       style={{
         left: mousePos.x + 30,
         top: mousePos.y - 90

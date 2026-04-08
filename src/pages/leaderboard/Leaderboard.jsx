@@ -14,6 +14,7 @@ export function Leaderboard() {
   const [scouts, setScouts] = useState(null);
   const [leaderboard, setLeaderboard] = useState(null);
   const [selected, setSelected] = useState(null);
+  const [podium, setPodium] = useState({first: [], second: [], third: []})
 
   const year = new Date().getFullYear();
   const navigate = useNavigate();
@@ -84,6 +85,17 @@ export function Leaderboard() {
 
     leaderboard.sort((a,b) => b.points - a.points);
 
+    // Calculate podium positions
+    let currentPlace = 0;
+    let lastPoints = null;
+    leaderboard.forEach((l) => {
+      if(l.points !== lastPoints) {
+        currentPlace += 1;
+        lastPoints = l.points;
+      }
+      l.place = currentPlace;
+    })
+
     setLeaderboard(leaderboard);
 
   }, [scouts])
@@ -133,6 +145,8 @@ export function Leaderboard() {
 
 function LeaderboardItem({s, i, setSelected}) {
 
+  const place = s.place;
+
   const [delayMultiplier, setDelayMultiplier] = useState(0.05);
 
   useEffect(() => {
@@ -147,11 +161,11 @@ function LeaderboardItem({s, i, setSelected}) {
       whileHover={{scale: 1.03, filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.25))', zIndex: 10, borderTopColor: 'rgba(0,0,0,1)'}}
       transition={{duration: 0.3, type: 'spring', delay: i * delayMultiplier}}
       className='relative w-full px-2 md:px-4 py-2 border-b-2 flex justify-between border-t-2 border-t-transparent cursor-pointer'
-      style={{backgroundColor: i===0 ? 'var(--trophy-gold)' : i===1 ? 'var(--trophy-silver)' : i===2 ? 'var(--trophy-bronze)' : 'white'}}
-      onClick={() => setSelected({scout: s, place: i+1})}
+      style={{backgroundColor: place===1 ? 'var(--trophy-gold)' : place===2 ? 'var(--trophy-silver)' : place===3 ? 'var(--trophy-bronze)' : (place%2)===0 ? '#f5f6fa' : '#dcdde1'}}
+      onClick={() => setSelected({scout: s, place: place})}
     >
       <div className='flex gap-2 md:gap-5 items-center'>
-        <h2 className='md:text-2xl'>#{i+1}</h2>
+        <h2 className='md:text-2xl'>#{place}</h2>
         <div className='w-10 md:w-14 shrink-0 aspect-square overflow-hidden border-2 flex jusitfy-center items-center rounded-md'>
           {
             s.pfp
@@ -225,26 +239,26 @@ function LeaderboardViewer({selected, setSelected}) {
           <div className='w-full max-w-120 grid grid-cols-4'>
             {/* LABELS */}
             <Label bold left>Post Type</Label>
-            <Label bold>Points/Post</Label>
             <Label bold># Posts</Label>
+            <Label bold>Points/Post</Label>
             <Label bold right># Points</Label>
 
             {/* ONE WHALE */}
             <Label left>One Whale</Label>
-            <Label>1</Label>
             <Label>{oneWhalePosts}</Label>
+            <Label>1</Label>
             <Label right>{oneWhalePosts}</Label>
 
             {/* TWO WHALES */}
             <Label left>Two Whales</Label>
-            <Label>3</Label>
             <Label>{twoWhalePosts}</Label>
+            <Label>3</Label>
             <Label right>{twoWhalePosts * 3}</Label>
 
             {/* THREE WHALES */}
             <Label left>Three Whales</Label>
-            <Label>5</Label>
             <Label>{threeWhalePosts}</Label>
+            <Label>5</Label>
             <Label right>{threeWhalePosts * 5}</Label>
 
             <div />

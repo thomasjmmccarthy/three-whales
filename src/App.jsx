@@ -12,6 +12,7 @@ import { Leaderboard } from './pages/leaderboard/Leaderboard'
 import { JoinPage } from './pages/join/JoinPage'
 import { AboutPage } from './pages/about/AboutPage'
 import { QRPage } from './pages/qr/QRPage'
+import { MemoryWallPage } from './pages/memory-wall/MemoryWallPage'
 
 function App() {
 
@@ -19,15 +20,19 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route index element={<TimelinePage />} />
-          <Route path='/timeline/*'   element={<TimelinePage />}  />
-          <Route path='/scouts/*'     element={<ScoutsPage />}    />
-          <Route path='/leaderboard'  element={<Leaderboard />}   />
-          <Route path='/join'         element={<JoinPage />}      />
-          <Route path='/qr'           element={<QRPage />}        />
-          <Route path='/about'        element={<AboutPage />}     />
 
-          <Route path='/login'        element={<LoginPage />}     />
+          <Route index element={<TimelinePage />} />
+          <Route path='/timeline/*'   element={<TimelinePage />}    />
+          <Route path='/memory-wall'  element={<MemoryWallPage />}  />
+
+          <Route path='/scouts/*'     element={<ScoutsPage />}      />
+          <Route path='/leaderboard'  element={<Leaderboard />}     />
+          <Route path='/join'         element={<JoinPage />}        />
+          <Route path='/qr'           element={<QRPage />}          />
+
+          <Route path='/about'        element={<AboutPage />}       />
+
+          <Route path='/login'        element={<LoginPage />}       />
 
           {/* Admin Pages */}
           <Route

@@ -91,8 +91,6 @@ export function LanePlan(dateGroups) {
       }
     }
 
-    console.log(i, ':', shouldTurn)
-
     // Append this blocks details to the lists
     xEntries.push(xEntry);
     xExits.push(xExit);

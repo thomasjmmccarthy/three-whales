@@ -47,7 +47,7 @@ function NavItem({navKey, title}) {
     of the navigation meny should lead to.
   */
   const navMap = {
-    "timeline": { "navTarget": "timeline", "isHome": true },
+    "timeline": { "navTarget": "timeline", "isHome": true, "alts": ["memory-wall"] },
     "about": { "navTarget": "about", },
     "scouts": { "navTarget": "scouts", "alts": ["leaderboard", "join"] }
   }

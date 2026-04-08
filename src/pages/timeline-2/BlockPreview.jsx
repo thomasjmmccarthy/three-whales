@@ -2,15 +2,17 @@ import { AnimatePresence, motion } from "motion/react";
 import { useMemo } from "react";
 import { useTailwindScreen } from "../../components/screens/tailwind-screen/TailwindScreen";
 
-export function BlockPreview({ block, mouseY, highlighted }) {
+export function BlockPreview({ activeBlock, dateGroups, mouseY, highlighted }) {
 
+  const block = dateGroups[activeBlock] ?? null;
   const posts = block?.posts;
+
   const imageClass = 'absolute w-30 h-30 xl:w-40 xl:h-40 2xl:w-50 2xl:h-50 object-cover rounded-lg shadow-md transition-all duration-200 contrast-200'
   const { is } = useTailwindScreen();
 
-  if(!block) return null;
-
   const { leftGallery, rightGallery } = useMemo(() => {
+    if(!block || !posts) return { leftGallery: [], rightGallery: [] };
+
     const allImages = [];
     const postMax = posts.length ? Math.floor(4 / posts.length) : 0;
 
@@ -42,45 +44,48 @@ export function BlockPreview({ block, mouseY, highlighted }) {
     return { leftGallery: left, rightGallery: right };
 
   }, [posts, highlighted]);
-
+  
   return (
-    <div className='fixed w-full flex justify-center -translate-y-1/2 ml-20' style={{top: mouseY}}>
+    <div className='fixed pointer-events-none w-full flex justify-center -translate-y-1/2 ml-20' style={{top: mouseY}}>
       <AnimatePresence mode='wait'>
-        <motion.div
-          key={block.posts[0].uid}
-          className='w-full flex justify-between items-center px-40 xl:px-55 2xl:px-90'
-          initial={{opacity: 0, scale: 0.9}}
-          animate={{opacity: 0.6, scale: 1}}
-          exit={{opacity: 0}}
-          transition={{duration: 0.2}}
-        >
-          {/* LEFT SIDE */}
-          <div className='relative w-80 h-80'>
-            {
-              leftGallery.map((g, i) => (
-                <img 
-                  key={g.url}
-                  src={g.lowResUrl}
-                  className={`${imageClass} ${g.highlighted ? '' : 'saturate-0'}`}
-                  style={getFanStyle(g, i, 'left', is)}
-                />
-              ))
-            }
-          </div>
-          {/* RIGHT SIDE */}
-          <div className='relative w-80 h-80'>
-            {
-              rightGallery.map((g, i) => (
-                <img 
-                  key={g.url}
-                  src={g.lowResUrl}
-                  className={`${imageClass} ${g.highlighted ? '' : 'saturate-0'}`}
-                  style={getFanStyle(g, i, 'right', is)}
-                />
-              ))
-            }
-          </div>
-        </motion.div>
+        {
+          (block && posts) &&
+          <motion.div
+            key={block.posts[0].uid}
+            className='w-full flex justify-between items-center px-40 xl:px-55 2xl:px-90'
+            initial={{opacity: 0, scale: 0.9}}
+            animate={{opacity: 0.6, scale: 1}}
+            exit={{opacity: 0}}
+            transition={{duration: 0.2}}
+          >
+            {/* LEFT SIDE */}
+            <div className='relative w-80 h-80'>
+              {
+                leftGallery.map((g, i) => (
+                  <img 
+                    key={g.url}
+                    src={g.lowResUrl}
+                    className={`${imageClass} ${g.highlighted ? '' : 'saturate-0'}`}
+                    style={getFanStyle(g, i, 'left', is)}
+                  />
+                ))
+              }
+            </div>
+            {/* RIGHT SIDE */}
+            <div className='relative w-80 h-80'>
+              {
+                rightGallery.map((g, i) => (
+                  <img 
+                    key={g.url}
+                    src={g.lowResUrl}
+                    className={`${imageClass} ${g.highlighted ? '' : 'saturate-0'}`}
+                    style={getFanStyle(g, i, 'right', is)}
+                  />
+                ))
+              }
+            </div>
+          </motion.div>
+        }
       </AnimatePresence>
     </div>
   )
